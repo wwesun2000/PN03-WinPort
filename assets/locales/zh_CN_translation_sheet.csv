@@ -1,0 +1,803 @@
+﻿key,source_kind,source_text,translation_zh_CN
+0x0001,id,,新游戏 (NEW GAME)
+0x0002,id,,读取存档 (LOAD GAME)
+0x0003,id,,系统设置 (OPTIONS)
+0x0004,id,,按 START 键开始
+0x0010,id,,简单难度 (EASY)
+0x0011,id,,普通难度 (NORMAL)
+0x0012,id,,困难难度 (HARD)
+0x0020,id,,装甲强化商店 (SUIT SHOP)
+0x0021,id,,模拟实战任务 (TRIAL MISSION)
+0x0022,id,,出发执行任务 (SORTIE)
+0x0023,id,,保存当前进度 (SAVE)
+0x0101,id,,凡妮莎·Z·施耐德：已抵达目标行星殖民地，开始清理失控自律兵器群（C.A.M.S.）。
+0x0102,id,,委托人通讯：摧毁该区域内所有暴走的机械守卫，报酬将直接汇入你的账户。
+0x0103,id,,警告：前方侦测到高能反应，大型自律兵器即将启动！
+NEW GAME,text,NEW GAME,新游戏
+LOAD GAME,text,LOAD GAME,读取存档
+OPTIONS,text,OPTIONS,游戏设置
+PRESS START,text,PRESS START,按 START 键继续
+EASY,text,EASY,简单模式
+NORMAL,text,NORMAL,普通模式
+HARD,text,HARD,困难模式
+SOUND,text,SOUND,音频输出模式
+MONO,text,MONO,单声道 (MONO)
+STEREO,text,STEREO,立体声 (STEREO)
+SURROUND,text,SURROUND,杜比环绕声 (DPL2)
+BGM VOLUME,text,BGM VOLUME,背景音乐音量
+SE VOLUME,text,SE VOLUME,音效音量
+RUMBLE,text,RUMBLE,手柄震动反馈
+KEY CONFIG,text,KEY CONFIG,手柄按键预设 (Type A-D)
+AEGIS SUIT,text,AEGIS SUIT,神盾标准型装甲 (Aegis Suit)
+INTERFUSION SUIT,text,INTERFUSION SUIT,融流机动型装甲 (Interfusion)
+KASHA SUIT,text,KASHA SUIT,火车间谍型装甲 (Kasha)
+BLACKBIRD SUIT,text,BLACKBIRD SUIT,黑鸟高攻型装甲 (Blackbird)
+PAPILLON SUIT,text,PAPILLON SUIT,蝶翼终极型装甲 (Papillon)
+FUSION SUIT,text,FUSION SUIT,聚变均衡型装甲 (Fusion)
+PROSUIT,text,PROSUIT,试作专业型装甲 (Prosuit)
+ULTRASUIT,text,ULTRASUIT,极限超频型装甲 (Ultrasuit)
+SWAN,text,SWAN,天鹅座·追踪光束 (Swan)
+OSPREY,text,OSPREY,鱼鹰座·扩散脉冲 (Osprey)
+FALCON,text,FALCON,猎鹰座·高速连射 (Falcon)
+SWALLOW,text,SWALLOW,燕座·广域扫射 (Swallow)
+RAVEN,text,RAVEN,渡鸦座·重型贯穿 (Raven)
+HARRIER,text,HARRIER,鹞座·浮游炮阵 (Harrier)
+HAWK,text,HAWK,苍鹰座·爆裂轰击 (Hawk)
+PHOENIX,text,PHOENIX,凤凰座·全屏净化 (Phoenix)
+THUNDERBIRD,text,THUNDERBIRD,雷鸟座·终极雷暴 (Thunderbird)
+ENERGY DRIVE,text,ENERGY DRIVE,能量必杀驱动 (Energy Drive)
+PALM SHOT,text,PALM SHOT,掌心雷激发 (Palm Shot)
+BARRIER,text,BARRIER,能量护盾值
+ENERGY,text,ENERGY,能量核心槽
+COMBO,text,COMBO,连击倍率
+MISSION CLEAR,text,MISSION CLEAR,任务完成
+ALL RESULT,text,ALL RESULT,关卡综合评价
+DESTROYED,text,DESTROYED,击破敌机数
+CLEAR TIME,text,CLEAR TIME,通关耗时
+TECHNIQUE,text,TECHNIQUE,战术技巧评分
+CONTINUE?,text,CONTINUE?,是否继续挑战？
+MEMORY CARD,text,MEMORY CARD,记忆卡存档管理
+Accept mission with current gear? <0b><17c><07>YES <07>NO<08>,text,Accept mission with current gear? <0b><17c><07>YES <07>NO<08>,使用当前装备接受任务吗？<0b><17c><07>是 <07>否<08>
+Check Energy Drive info.,text,Check Energy Drive info.,查看能量驱动（Energy Drive）信息。
+Check mission info.,text,Check mission info.,查看当前任务信息。
+Check game settings.,text,Check game settings.,查看游戏系统设置。
+Check help info.,text,Check help info.,查看操作说明与帮助。
+Return to game.,text,Return to game.,返回游戏。
+"<06>
+SWAN<06> (Energy Consumption Level: 1)
+Fires 4 homing lasers.",text,"<06>
+SWAN<06> (Energy Consumption Level: 1)
+Fires 4 homing lasers.","<06>
+天鹅座 SWAN<06> 能量消耗等级：1
+发射追踪激光。"
+"<06>
+GULLWING<06> (Energy Consumption Level: 1)
+Fires an energy ball that disperses upon impact and
+destroys other enemies nearby.",text,"<06>
+GULLWING<06> (Energy Consumption Level: 1)
+Fires an energy ball that disperses upon impact and
+destroys other enemies nearby.","<06>
+鸥翼座 GULLWING<06> 能量消耗等级：1
+发射会在命中时扩散的能量球，
+摧毁周围的敌人。"
+"<06>
+HARRIER<06> (Energy Consumption Level: 1)
+Fires reflecting lasers that penetrate enemies and
+energy barriers.",text,"<06>
+HARRIER<06> (Energy Consumption Level: 1)
+Fires reflecting lasers that penetrate enemies and
+energy barriers.","<06>
+鹞座 HARRIER<06> 能量消耗等级：1
+发射可穿透敌人与能量护盾的
+反射激光。"
+"<06>
+FALCON<06> (Energy Consumption Level: 1)
+Destroys enemies by firing lasers in all directions by
+spinning her body.",text,"<06>
+FALCON<06> (Energy Consumption Level: 1)
+Destroys enemies by firing lasers in all directions by
+spinning her body.","<06>
+猎鹰座 FALCON<06> 能量消耗等级：1
+通过旋转身体向四周发射激光
+消灭周围敌人。"
+"<06>
+GRIFFIN<06> (Energy Consumption Level: 1)
+Damages nearby enemies by releasing an energy wave
+that penetrates any kind of obstruction, even  energy
+barriers.",text,"<06>
+GRIFFIN<06> (Energy Consumption Level: 1)
+Damages nearby enemies by releasing an energy wave
+that penetrates any kind of obstruction, even  energy
+barriers.","<06>
+狮鹫座 GRIFFIN<06> 能量消耗等级：1
+释放能穿透任何障碍物，甚至
+能量护盾的能量波重创周围敌人。"
+"<06>
+PEGASUS<06> (Energy Consumption Level: 1)
+Fires 2 powerful lasers that concentrate all of their
+power on the target.",text,"<06>
+PEGASUS<06> (Energy Consumption Level: 1)
+Fires 2 powerful lasers that concentrate all of their
+power on the target.","<06>
+天马座 PEGASUS<06> 能量消耗等级：1
+发射 2 道强力激光，将全部
+威力集中于目标之上。"
+"<06>
+THUNDERBIRD<06> (Energy Consumption Level: 1)
+Fires sparking energy balls that splits upon impact to
+destroy other enemies nearby.",text,"<06>
+THUNDERBIRD<06> (Energy Consumption Level: 1)
+Fires sparking energy balls that splits upon impact to
+destroy other enemies nearby.","<06>
+雷鸟座 THUNDERBIRD<06> 能量消耗等级：1
+发射电弧能量球，命中后会分裂
+并摧毁周围敌人。"
+"<06>
+TENGU<06>(Energy Consumption Level: 2)
+Enables Vanessa to become invincible for 5 seconds.
+During this time the power of her Palm Shot is increased.",text,"<06>
+TENGU<06>(Energy Consumption Level: 2)
+Enables Vanessa to become invincible for 5 seconds.
+During this time the power of her Palm Shot is increased.","<06>
+天狗座 TENGU<06> 能量消耗等级：2
+使凡妮莎进入 5 秒无敌状态。
+在此期间掌心雷的威力也会提升。"
+"<06>
+SWAN PRO<06> (Energy Consumption Level: 3)
+The power up version of the SWAN.
+There are more homing lasers than that of the normal
+SWAN.",text,"<06>
+SWAN PRO<06> (Energy Consumption Level: 3)
+The power up version of the SWAN.
+There are more homing lasers than that of the normal
+SWAN.","<06>
+天鹅座强化版 SWAN PRO<06> 能量消耗等级：3
+SWAN 的强化型号。
+发射的追踪激光数量比普通型更多。"
+"<06>
+GULLWING PRO<06> (Energy Consumption Level: 2)
+The power up version of the GULLWING.",text,"<06>
+GULLWING PRO<06> (Energy Consumption Level: 2)
+The power up version of the GULLWING.","<06>
+鸥翼座强化版 GULLWING PRO<06> 能量消耗等级：2
+GULLWING 的强化型号。"
+"<06>
+HARRIER PRO<06> (Energy Consumption Level: 2)
+The power up version of the HARRIER.",text,"<06>
+HARRIER PRO<06> (Energy Consumption Level: 2)
+The power up version of the HARRIER.","<06>
+鹞座强化版 HARRIER PRO<06> 能量消耗等级：2
+HARRIER 的强化型号。"
+"<06>
+FALCON PRO<06> (Energy Consumption Level: 2)
+The power up version of the FALCON.",text,"<06>
+FALCON PRO<06> (Energy Consumption Level: 2)
+The power up version of the FALCON.","<06>
+猎鹰座强化版 FALCON PRO<06> 能量消耗等级：2
+FALCON 的强化型号。"
+"<06>
+GRIFFIN PRO<06> (Energy Consumption Level: 3)
+The power up version of the GRIFFIN.",text,"<06>
+GRIFFIN PRO<06> (Energy Consumption Level: 3)
+The power up version of the GRIFFIN.","<06>
+狮鹫座强化版 GRIFFIN PRO<06> 能量消耗等级：3
+GRIFFIN 的强化型号。"
+"<06>
+PEGASUS PRO<06> (Energy Consumption Level: 3)
+The power up version of the PEGASUS.",text,"<06>
+PEGASUS PRO<06> (Energy Consumption Level: 3)
+The power up version of the PEGASUS.","<06>
+天马座强化版 PEGASUS PRO<06> 能量消耗等级：3
+PEGASUS 的强化型号。"
+"<06>
+THUNDERBIRD PRO<06> (Energy Consumption Level: 2)
+The power up version of the THUNDERBIRD.",text,"<06>
+THUNDERBIRD PRO<06> (Energy Consumption Level: 2)
+The power up version of the THUNDERBIRD.","<06>
+雷鸟座强化版 THUNDERBIRD PRO<06> 能量消耗等级：2
+THUNDERBIRD 的强化型号。"
+"<06>
+TENGU PRO<06> (Energy Consumption Level: 3)
+The power up version of the TENGU. The invincibility
+time lasts longer than that of the normal TENGU.
+(10sec.)",text,"<06>
+TENGU PRO<06> (Energy Consumption Level: 3)
+The power up version of the TENGU. The invincibility
+time lasts longer than that of the normal TENGU.
+(10sec.)","<06>
+天狗座强化版 TENGU PRO<06> 能量消耗等级：3
+TENGU 的强化型号，无敌持续时间
+比普通 TENGU 更长。
+（10 秒）"
+SWAN<0e>,text,SWAN<0e>,天鹅座 SWAN<0e>
+GULLWING<0e>,text,GULLWING<0e>,鸥翼座 GULLWING<0e>
+HARRIER<0e>,text,HARRIER<0e>,鹞座 HARRIER<0e>
+FALCON<0e>,text,FALCON<0e>,猎鹰座 FALCON<0e>
+GRIFFIN<0e>,text,GRIFFIN<0e>,狮鹫座 GRIFFIN<0e>
+PEGASUS<0e>,text,PEGASUS<0e>,天马座 PEGASUS<0e>
+THUNDERBIRD<0e>,text,THUNDERBIRD<0e>,雷鸟座 THUNDERBIRD<0e>
+TENGU<0e>,text,TENGU<0e>,天狗座 TENGU<0e>
+SWAN PRO<0e>,text,SWAN PRO<0e>,天鹅座 PRO<0e>
+GULLWING PRO<0e>,text,GULLWING PRO<0e>,鸥翼座 PRO<0e>
+HARRIER PRO<0e>,text,HARRIER PRO<0e>,鹞座 PRO<0e>
+FALCON PRO<0e>,text,FALCON PRO<0e>,猎鹰座 PRO<0e>
+GRIFFIN PRO<0e>,text,GRIFFIN PRO<0e>,狮鹫座 PRO<0e>
+PEGASUS PRO<0e>,text,PEGASUS PRO<0e>,天马座 PRO<0e>
+THUNDERBIRD PRO<0e>,text,THUNDERBIRD PRO<0e>,雷鸟座 PRO<0e>
+TENGU PRO<0e>,text,TENGU PRO<0e>,天狗座 PRO<0e>
+Select the Energy Drive you want to remove.,text,Select the Energy Drive you want to remove.,请选择要卸下的能量驱动。
+Equip the <ffff>?<0b><17c><07>YES <07>NO<08>,text,Equip the <ffff>?<0b><17c><07>YES <07>NO<08>,要装备 <ffff> 吗？<0b><17c><07>是 <07>否<08>
+The <ffff> has been equipped.<08>,text,The <ffff> has been equipped.<08>,已装备 <ffff>。<08>
+Change sound settings.,text,Change sound settings.,更改声音与音频输出设置。
+Adjust background music volume.,text,Adjust background music volume.,调整背景音乐音量。
+Adjust sound effects volume.,text,Adjust sound effects volume.,调整音效音量。
+Change button configuration.,text,Change button configuration.,更改手柄按键预设方案。
+Reset the game.,text,Reset the game.,重置游戏。
+Exit options screen.,text,Exit options screen.,退出设置界面。
+"Reset the game and return to the title screen?
+<0b><17c><07>YES <07>NO<08>",text,"Reset the game and return to the title screen?
+<0b><17c><07>YES <07>NO<08>","确定要重置游戏并返回标题画面吗？
+<0b><17c><07>是 <07>否<08>"
+Rumble ON/OFF?,text,Rumble ON/OFF?,手柄震动开 / 关？
+Return to previous screen.,text,Return to previous screen.,返回上一界面。
+X Button <0a>,text,X Button <0a>,X 键 <0a>
+R Button <0a>,text,R Button <0a>,R 键 <0a>
+"<06>to move the 
+LOCK-ON Cursor.",text,"<06>to move the 
+LOCK-ON Cursor.","<06>移动
+锁定准星。"
+Y Button <0d>,text,Y Button <0d>,Y 键 <0d>
+L Button <0d>,text,L Button <0d>,L 键 <0d>
+"<06>to hide. When the
+enemy fire passes, stand up and blast them!",text,"<06>to hide. When the
+enemy fire passes, stand up and blast them!","<06>进行掩体隐蔽。当敌人
+火力穿过后，起身反击！"
+L Button or R Button <10>,text,L Button or R Button <10>,L 键或 R 键 <10>
+Y Button or X Button <10>,text,Y Button or X Button <10>,Y 键或 X 键 <10>
+"<06>to dodge
+enemy fire.",text,"<06>to dodge
+enemy fire.","<06>闪避
+敌人攻击。"
+You can power up your Aegis Suits.,text,You can power up your Aegis Suits.,可以强化您的神盾装甲性能。
+You can buy new Aegis Suits and Continues.,text,You can buy new Aegis Suits and Continues.,可以购买新神盾装甲与续关次数。
+You can change your Aegis Suits.,text,You can change your Aegis Suits.,可以更换穿戴的神盾装甲。
+You can increase the Barrier power.,text,You can increase the Barrier power.,可以提升能量护盾上限。
+You can increase the Palm Shot power.,text,You can increase the Palm Shot power.,可以提升掌心雷射击威力。
+You can power up the automatic performance.,text,You can power up the automatic performance.,可以强化自动辅助射击性能。
+You can increase the maximum energy level.,text,You can increase the maximum energy level.,可以提升能量槽最大上限。
+Enable new Energy Drives.,text,Enable new Energy Drives.,解锁并启用新的能量驱动必杀。
+Power up? <36>,text,Power up? <36>,确定强化吗？<36>
+You cannot power up anymore.<08>,text,You cannot power up anymore.<08>,该项已达到最高强化等级。<08>
+Power up complete.<08>,text,Power up complete.<08>,强化完成。<08>
+You need more points to power up.<08>,text,You need more points to power up.<08>,点数不足，无法强化。<08>
+"Power up the barrier of the <ffff>?
+<36>",text,"Power up the barrier of the <ffff>?
+<36>","要强化 <ffff> 的护盾吗？
+<36>"
+"Power up the Palm Shot of the <ffff>?
+<36>",text,"Power up the Palm Shot of the <ffff>?
+<36>","要强化 <ffff> 的掌心雷吗？
+<36>"
+"Power up the automatic performance of 
+the <ffff>? <36>",text,"Power up the automatic performance of 
+the <ffff>? <36>","要强化 <ffff> 的自动
+辅助性能吗？<36>"
+"Power up the maximum energy of 
+the <ffff>? <36>",text,"Power up the maximum energy of 
+the <ffff>? <36>","要提升 <ffff> 的最大
+能量上限吗？<36>"
+"Power up the Energy Drive of 
+the <ffff>? <36>",text,"Power up the Energy Drive of 
+the <ffff>? <36>","要强化 <ffff> 的能量
+驱动技能吗？<36>"
+"Do you want to buy the <ffff>? 
+<36>",text,"Do you want to buy the <ffff>? 
+<36>","确定要购买 <ffff> 吗？
+<36>"
+"You need more points to buy
+the <ffff>..<08>",text,"You need more points to buy
+the <ffff>..<08>","点数不足，无法购买
+<ffff>。<08>"
+You already have the <ffff>.,text,You already have the <ffff>.,您已经拥有 <ffff>。
+You have bought the <ffff>.<08>,text,You have bought the <ffff>.<08>,已购买 <ffff>。<08>
+You cannot buy anymore items.<08>,text,You cannot buy anymore items.<08>,无法再购买更多物品。<08>
+Select a suit you want to wear.,text,Select a suit you want to wear.,请选择要更换的神盾装甲。
+"Change your suit to the <ffff>? 
+<36>",text,"Change your suit to the <ffff>? 
+<36>","要更换为 <ffff> 吗？
+<36>"
+You have changed your suit to the <ffff>.<08>,text,You have changed your suit to the <ffff>.<08>,已更换为 <ffff>。<08>
+Select an Energy Drive you wish to remove.,text,Select an Energy Drive you wish to remove.,请选择需要卸下的能量驱动。
+<06>1 additional continue<06><0e><ffff>,text,<06>1 additional continue<06><0e><ffff>,<06>追加 1 次续关次数<06><0e><ffff>
+<06>3 additional continues<06><0e><ffff>,text,<06>3 additional continues<06><0e><ffff>,<06>追加 3 次续关次数<06><0e><ffff>
+<06>PRIMA FUSION<06><0e>,text,<06>PRIMA FUSION<06><0e>,<06>初阶均衡型 PRIMA FUSION<06><0e>
+<06>PRIMA BLAZER<06><0e>,text,<06>PRIMA BLAZER<06><0e>,<06>初阶强攻型 PRIMA BLAZER<06><0e>
+<06>PRIMA GUARDIAN<06><0e>,text,<06>PRIMA GUARDIAN<06><0e>,<06>初阶防御型 PRIMA GUARDIAN<06><0e>
+<06>INTERA FUSION<06><0e>,text,<06>INTERA FUSION<06><0e>,<06>中阶均衡型 INTERA FUSION<06><0e>
+<06>INTERA BLAZER<06><0e>,text,<06>INTERA BLAZER<06><0e>,<06>中阶强攻型 INTERA BLAZER<06><0e>
+<06>INTERA GUARDIAN<06><0e>,text,<06>INTERA GUARDIAN<06><0e>,<06>中阶防御型 INTERA GUARDIAN<06><0e>
+<06>ULTRA FUSION<06><0e>,text,<06>ULTRA FUSION<06><0e>,<06>高阶均衡型 ULTRA FUSION<06><0e>
+<06>ULTRA BLAZER<06><0e>,text,<06>ULTRA BLAZER<06><0e>,<06>高阶强攻型 ULTRA BLAZER<06><0e>
+<06>ULTRA GUARDIAN<06><0e>,text,<06>ULTRA GUARDIAN<06><0e>,<06>高阶防御型 ULTRA GUARDIAN<06><0e>
+<06>BLACKBIRD<06><0e>,text,<06>BLACKBIRD<06><0e>,<06>黑鸟型 BLACKBIRD<06><0e>
+<06>PAPILLON<06><0e>,text,<06>PAPILLON<06><0e>,<06>蝶翼型 PAPILLON<06><0e>
+<06>1 additional continue<06>,text,<06>1 additional continue<06>,<06>追加 1 次续关次数<06>
+<06>3 additional continues<06>,text,<06>3 additional continues<06>,<06>追加 3 次续关次数<06>
+"<06>PRIMA FUSION (Level 1)<06>
+A well balanced suit both in offense and defense. An all
+around suit that can handle just about any situation.",text,"<06>PRIMA FUSION (Level 1)<06>
+A well balanced suit both in offense and defense. An all
+around suit that can handle just about any situation.","<06>PRIMA FUSION（Lv.1）<06>
+攻防兼备的均衡型装甲，能从容应对各种战斗局势。"
+"<06>PRIMA BLAZER (Level 1)<06>
+A suit specialized for offense. However due to its
+inferior defense, good dodging skills are required.",text,"<06>PRIMA BLAZER (Level 1)<06>
+A suit specialized for offense. However due to its
+inferior defense, good dodging skills are required.","<06>PRIMA BLAZER（Lv.1）<06>
+专精进攻的突击型装甲。由于防御力较弱，非常考验
+闪避技巧。"
+"<06>PRIMA GUARDIAN (Level 1)<06>
+A suit specailized for defense. Its high energy potential
+makes up for its weak offense.",text,"<06>PRIMA GUARDIAN (Level 1)<06>
+A suit specailized for defense. Its high energy potential
+makes up for its weak offense.","<06>PRIMA GUARDIAN（Lv.1）<06>
+专精防御的重装装甲。高充能潜力可弥补火力上的不足。"
+"<06>INTERA FUSION (Level 2)<06>
+A well balanced suit both in offense and defense. An all
+around suit that can handle just about any situation.",text,"<06>INTERA FUSION (Level 2)<06>
+A well balanced suit both in offense and defense. An all
+around suit that can handle just about any situation.","<06>INTERA FUSION（Lv.2）<06>
+攻防兼备的均衡型中阶装甲，适用于各类复杂战况。"
+"<06>INTERA BLAZER (Level 2)<06>
+A suit specialized for offense. However due to its
+inferior defense, good dodging skills are required.",text,"<06>INTERA BLAZER (Level 2)<06>
+A suit specialized for offense. However due to its
+inferior defense, good dodging skills are required.","<06>INTERA BLAZER（Lv.2）<06>
+专精进攻的中阶高攻装甲。鉴于护盾较低，需要娴熟
+的闪避技巧。"
+"<06>INTERA GUARDIAN (Level 2)<06>
+A suit specailized for defense. Its high energy potential
+makes up for its weak offense.",text,"<06>INTERA GUARDIAN (Level 2)<06>
+A suit specailized for defense. Its high energy potential
+makes up for its weak offense.","<06>INTERA GUARDIAN（Lv.2）<06>
+专精防御的中阶高防装甲。优异的能量上限足以弥补
+输出欠缺。"
+"<06>ULTRA FUSION (Level 3)<06>
+A well balanced suit both in offense and defense. An all
+around suit that can handle just about any situation.",text,"<06>ULTRA FUSION (Level 3)<06>
+A well balanced suit both in offense and defense. An all
+around suit that can handle just about any situation.","<06>ULTRA FUSION（Lv.3）<06>
+攻防俱佳的高阶万能型装甲，可胜任一切高危任务。"
+"<06>ULTRA BLAZER (Level 3)<06>
+A suit specialized for offense. However due to its
+inferior defense, good dodging skills are required.",text,"<06>ULTRA BLAZER (Level 3)<06>
+A suit specialized for offense. However due to its
+inferior defense, good dodging skills are required.","<06>ULTRA BLAZER（Lv.3）<06>
+专精极限输出的高阶装甲。因防御薄弱，需要精准
+闪避敌火。"
+"<06>ULTRA GUARDIAN (Level 3)<06>
+A suit specailized for defense. Its high energy potential
+makes up for its weak offense.",text,"<06>ULTRA GUARDIAN (Level 3)<06>
+A suit specailized for defense. Its high energy potential
+makes up for its weak offense.","<06>ULTRA GUARDIAN（Lv.3）<06>
+专精生存防护的高阶装甲。充沛的能量储备弥补了攻击
+力不足。"
+"<06>BLACKBIRD (Level 4)<06>
+The perfect suit.",text,"<06>BLACKBIRD (Level 4)<06>
+The perfect suit.","<06>BLACKBIRD（终极黑鸟）<06>
+完美无瑕的顶尖神盾装甲。"
+"<06>PAPILLON (Level 5)<06>
+A suit capable of using all of the Energy Drives.
+However due to the fact it has no defense, perfect
+tactical dodging skills are required by the wearer.",text,"<06>PAPILLON (Level 5)<06>
+A suit capable of using all of the Energy Drives.
+However due to the fact it has no defense, perfect
+tactical dodging skills are required by the wearer.","<06>PAPILLON（Lv.5）<06>
+可使用全部能量驱动的究极装甲。
+但由于几乎没有防御力，穿戴者必须具备完美的战术
+闪避技巧。"
+<0b><17c><07>YES <07>NO<08>,text,<0b><17c><07>YES <07>NO<08>,<0b><17c><07>是 <07>否<08>
+So how do you like your new work environment?<08>,text,So how do you like your new work environment?<08>,觉得这处新的作战环境怎么样？<08>
+I feel at home already.<08>,text,I feel at home already.<08>,简直像回到家一样自在。<08>
+"I think this is the first time we've actually spoken to
+one another.<08>",text,"I think this is the first time we've actually spoken to
+one another.<08>",我想这还是我们第一次正式这样交谈吧。<08>
+"So this time I have a client who doesn't want to
+show their face?<08><04>Come on, you've seen my face, but I haven't seen
+yours. That's not very fair now, is it?<08>",text,"So this time I have a client who doesn't want to
+show their face?<08><04>Come on, you've seen my face, but I haven't seen
+yours. That's not very fair now, is it?<08>","这么说这次的委托人不肯露面咯？<08><04>别这样嘛，你都见过我的脸，我却还没见过
+你——这可不太公平，对吧？<08>"
+Maybe after this job is finished.<08>,text,Maybe after this job is finished.<08>,等这单任务结束以后再说吧。<08>
+"No need to be so bashful, but I guess you have your
+reasons...<08>",text,"No need to be so bashful, but I guess you have your
+reasons...<08>",用不着这么害羞，不过我猜你肯定有你的隐衷……<08>
+"I read in your profile that your parents were killed
+by CAMS.<08>",text,"I read in your profile that your parents were killed
+by CAMS.<08>",我在你的档案里看到，你的父母是被 CAMS 杀害的。<08>
+That's all behind me now.<08>,text,That's all behind me now.<08>,那些都已经过去了。<08>
+"Anyway, that's enough chit-chat, let's just get the
+job done.<08><04>Is that okay with you Vanessa?<08>",text,"Anyway, that's enough chit-chat, let's just get the
+job done.<08><04>Is that okay with you Vanessa?<08>",总而言之，闲话到此为止，我们专心完成任务吧。<08><04>没问题吧，凡妮莎？<08>
+I can see you are all business.<08>,text,I can see you are all business.<08>,看得出来你完全是个工作狂。<08>
+"Find the entrance to the facility. You should be able
+to infiltrate the facility from there.<08>",text,"Find the entrance to the facility. You should be able
+to infiltrate the facility from there.<08>",找到设施入口，从那里应当能顺利潜入内部。<08>
+Roger that.<08>,text,Roger that.<08>,收到。<08>
+How do you like your Aegis Suit?<08>,text,How do you like your Aegis Suit?<08>,神盾装甲穿起来感觉如何？<08>
+Not bad.<08>,text,Not bad.<08>,还算不错。<08>
+"Your Aegis Suit has a special feature called the
+Energy Drive.<08>",text,"Your Aegis Suit has a special feature called the
+Energy Drive.<08>",你的神盾装甲搭载了一项名为“能量驱动”的特殊机能。<08>
+Energy Drive?<08>,text,Energy Drive?<08>,能量驱动？<08>
+"It's a special attack that enables you to discharge
+destructive energy contained within the suit.<08><04>If your interested in mastering the Energy Drive,
+press START and go to the Menu screen to find out.<08><04>Since the suit is directly connected to your spinal
+cord, you can expect the response time to be<08><04>lightning quick.<08>",text,"It's a special attack that enables you to discharge
+destructive energy contained within the suit.<08><04>If your interested in mastering the Energy Drive,
+press START and go to the Menu screen to find out.<08><04>Since the suit is directly connected to your spinal
+cord, you can expect the response time to be<08><04>lightning quick.<08>","那是一种能够释放装甲内部毁灭性能量的特殊攻击。<08><04>如果你想熟练掌握能量驱动，
+可按 START 键进入菜单界面查看详情。<08><04>由于装甲与你的脊椎神经直接相连，反应速度将会
+达到<08><04>闪电般的敏捷。<08>"
+"I don't ever remember signing up to be a human
+guinea pig.<08>",text,"I don't ever remember signing up to be a human
+guinea pig.<08>",我可不记得自己签过什么人体试验同意书。<08>
+"By the way you can also dodge the enemy attacks
+by using the L and R Buttons.<08>",text,"By the way you can also dodge the enemy attacks
+by using the L and R Buttons.<08>",顺带一提，使用 L 键和 R 键也能闪避敌人的攻击。<08>
+Roger.<08>,text,Roger.<08>,明白。<08>
+Use the topography to your advantage.<08>,text,Use the topography to your advantage.<08>,善用周围地形掩体来取得优势。<08>
+"You have to destroy all the enemies in that room
+before you can go on.<08>",text,"You have to destroy all the enemies in that room
+before you can go on.<08>",必须消灭该房间内的全部敌人才能继续前进。<08>
+Just great.<08>,text,Just great.<08>,真是麻烦。<08>
+Good luck.<08>,text,Good luck.<08>,祝你好运。<08>
+"I've transported an Energy Pod to areas where
+there aren't any enemies.<08><04>You can replenish whatever you need there.<08>",text,"I've transported an Energy Pod to areas where
+there aren't any enemies.<08><04>You can replenish whatever you need there.<08>",我已经在没有敌人的安全区传送了能量补给舱。<08><04>你可以在那里随时补充所需资源。<08>
+"The red circle right?
+Thanks.<08>",text,"The red circle right?
+Thanks.<08>","就是那个红色光圈对吧？
+谢了。<08>"
+"Sonnenblume! You can't destroy it with your
+current gear. You'd better come back for now.<08>",text,"Sonnenblume! You can't destroy it with your
+current gear. You'd better come back for now.<08>",向日葵炮台！凭你现在的装备还无法摧毁它，最好先撤回来。<08>
+Sure. But you underestimate me.<08>,text,Sure. But you underestimate me.<08>,行吧，不过你可太小看我了。<08>
+What's next?<08>,text,What's next?<08>,下一步是什么？<08>
+"Destroy the energy reactor within the enemy
+compound.<08>",text,"Destroy the energy reactor within the enemy
+compound.<08>",摧毁敌方基地内的能量反应堆。<08>
+"Oh, I thought I was supposed to destroy that
+giraffe-looking hunk of junk.<08>",text,"Oh, I thought I was supposed to destroy that
+giraffe-looking hunk of junk.<08>",哦，我还以为要打倒那个长得像长颈鹿的废铁家伙呢。<08>
+"If we destroy their energy source first, it will make
+our job a lot easier later on. Especially for you.<08>",text,"If we destroy their energy source first, it will make
+our job a lot easier later on. Especially for you.<08>",先破坏敌人的能源核心，之后的行动就会轻松许多，尤其是对你来说。<08>
+"I'd rather take them out one by one-sort of like
+knocking down dominoes, you know. <08><04>It's much less stressful that way.<08>",text,"I'd rather take them out one by one-sort of like
+knocking down dominoes, you know. <08><04>It's much less stressful that way.<08>",我倒更喜欢像推倒多米诺骨牌一样把它们一个个清掉，你懂的。<08><04>那样反而没那么大压力。<08>
+"Let's just do it.
+Also, watch out for the laser traps.<08>",text,"Let's just do it.
+Also, watch out for the laser traps.<08>","开始行动吧。
+另外，小心附近的激光陷阱。<08>"
+"Don't worry. I prefer to stay in one piece, too.<08>",text,"Don't worry. I prefer to stay in one piece, too.<08>",放心，我也不想被切得支离破碎。<08>
+"There's an energy field that surrounds the energy
+reactor.<08><04>Shoot the core when there's an opening in the
+energy field.<08>",text,"There's an energy field that surrounds the energy
+reactor.<08><04>Shoot the core when there's an opening in the
+energy field.<08>",能量反应堆周围覆盖着防护力场。<08><04>趁力场出现破绽的瞬间射击核心！<08>
+"Good job.
+Maybe I should hire you privately?<08>",text,"Good job.
+Maybe I should hire you privately?<08>","干得漂亮。
+也许我该私人长期雇佣你？<08>"
+Enough jokes already.<08>,text,Enough jokes already.<08>,少开玩笑了。<08>
+This is your next target.<08><0d>,text,This is your next target.<08><0d>,这就是你的下一个目标。<08><0d>
+Mister giraffe.<08>,text,Mister giraffe.<08>,长颈鹿先生。<08>
+I think you can handle it this time.<08>,text,I think you can handle it this time.<08>,这次你应该能顺利摆平它。<08>
+"I can see you're not very good at motivation.<08><04>I'm gonna need a big fat bonus for this one, you
+know.<08>",text,"I can see you're not very good at motivation.<08><04>I'm gonna need a big fat bonus for this one, you
+know.<08>",看来你可真不太懂得如何鼓舞士气。<08><04>这一单我可是要狠狠要一笔丰厚奖金的，你懂吧。<08>
+I'm counting on you.<08>,text,I'm counting on you.<08>,那就拜托你了。<08>
+How's it going?<08>,text,How's it going?<08>,进展如何？<08>
+"It could be better, if you didn't keep interrupting me
+all the time with your damn transmissions.<08>",text,"It could be better, if you didn't keep interrupting me
+all the time with your damn transmissions.<08>",要是你不老是用那该死的通讯打断我，本来能更顺利些。<08>
+"Alrighty then we'll do this without a briefing this
+time.<08>",text,"Alrighty then we'll do this without a briefing this
+time.<08>",那好吧，这次我们就省掉任务简报了。<08>
+You sure can be a pain sometimes.<08>,text,You sure can be a pain sometimes.<08>,你有时候还真是够令人头疼的。<08>
+"Come on now, does sending an ""innocent girl"" like
+yourself into battle sound like something a ""nice<08><04>woman"" would do?<08>",text,"Come on now, does sending an ""innocent girl"" like
+yourself into battle sound like something a ""nice<08><04>woman"" would do?<08>",得了吧，把你这样一位“纯真少女”派上战场，听起来像是“温柔<08><04>女性”会做的事吗？<08>
+You do have a point.<08>,text,You do have a point.<08>,你说的倒也有道理。<08>
+"The mushroom shaped floater enemy is capable of
+scanning your combat data and sending it to other<08><04>enemy units.<08>",text,"The mushroom shaped floater enemy is capable of
+scanning your combat data and sending it to other<08><04>enemy units.<08>",那个蘑菇状的浮游敌机能够扫描你的战斗数据并传输给其他<08><04>敌方单位。<08>
+So I should get rid of them first.<08>,text,So I should get rid of them first.<08>,也就是说我该优先解决它们。<08>
+"You catch on quick.
+Talk to you later.<08>",text,"You catch on quick.
+Talk to you later.<08>","领悟得真快。
+回头再聊。<08>"
+"The front hatch is locked.
+You have to go through the hatch above you.<08>",text,"The front hatch is locked.
+You have to go through the hatch above you.<08>","正前方的舱门已经上锁。
+你必须从上方的舱口绕行。<08>"
+What's beyond the front hatch?<08>,text,What's beyond the front hatch?<08>,正面舱门后面是什么地方？<08>
+"I'll save that one for later.
+Just do as I say okay?<08>",text,"I'll save that one for later.
+Just do as I say okay?<08>","这个悬念先留到之后揭晓。
+照我说的去做就好，行吗？<08>"
+Well done.<08>,text,Well done.<08>,做得好。<08>
+I'm gonna need a bonus.<08>,text,I'm gonna need a bonus.<08>,这下我可得多拿点奖金才行。<08>
+"I've put in some new Aegis Suits in the shop.
+You should check it out.<08>",text,"I've put in some new Aegis Suits in the shop.
+You should check it out.<08>","我已经在商店上架了几款全新神盾装甲。
+有空记得去看看。<08>"
+I will when I feel like it.<08>,text,I will when I feel like it.<08>,等我有兴致了自然会去。<08>
+"Have you gotten yourself a new suit?<08><04>The suits take a bit of getting used to but I'm sure
+you'll do okay.<08>",text,"Have you gotten yourself a new suit?<08><04>The suits take a bit of getting used to but I'm sure
+you'll do okay.<08>",你换上新装甲了吗？<08><04>新装甲可能需要时间适应手感，但我相信你没问题的。<08>
+I've gotten used to you haven't I?<08>,text,I've gotten used to you haven't I?<08>,连你我都已经习惯了，不是吗？<08>
+"Don't get smart with me.
+Just remember who's got your paycheck.<08>",text,"Don't get smart with me.
+Just remember who's got your paycheck.<08>","别跟我贫嘴。
+记住是谁给你发薪水的。<08>"
+"I forgot to mention an important thing. This mission
+will take place outside.<08><04>Your objective is to destroy the core of the
+enemy units' insertion point.<08>",text,"I forgot to mention an important thing. This mission
+will take place outside.<08><04>Your objective is to destroy the core of the
+enemy units' insertion point.<08>",差点忘了说一件重要事：本次任务将在室外区域进行。<08><04>你的目标是摧毁敌军投放点核心。<08>
+"Fresh air for a change. But you know my shades will
+get dirty outside.<08>",text,"Fresh air for a change. But you know my shades will
+get dirty outside.<08>",难得呼吸下新鲜空气。不过到了外面，我的墨镜可是会弄脏的。<08>
+I'm taking the day off tomorrow. If you don't mind.<08>,text,I'm taking the day off tomorrow. If you don't mind.<08>,如果不介意的话，我明天休假一天。<08>
+Be my guest.<08>,text,Be my guest.<08>,请便吧。<08>
+Did you buy yourself a new pair of sunglasses?<08>,text,Did you buy yourself a new pair of sunglasses?<08>,顺便给自己买副新太阳镜了吗？<08>
+What's my next mission?<08>,text,What's my next mission?<08>,我的下一个任务是什么？<08>
+"Destroy the CAMS' command tower. Its core
+should be at the top level.<08><04>I have some unfinished business to take care of so
+no complaints. Okay?<08>",text,"Destroy the CAMS' command tower. Its core
+should be at the top level.<08><04>I have some unfinished business to take care of so
+no complaints. Okay?<08>",摧毁 CAMS 的指挥塔，它的核心就在顶层。<08><04>我还有点未了的私事要处理，别抱怨，行吗？<08>
+Looks kind of like a train almost.<08>,text,Looks kind of like a train almost.<08>,看起来简直活像一列火车。<08>
+You'll find out soon enough if it's a train or not.<08>,text,You'll find out soon enough if it's a train or not.<08>,是不是火车，你很快就会亲自见识到了。<08>
+"All I have to do is destroy it, right?<08>",text,"All I have to do is destroy it, right?<08>",只要把它毁掉就行，对吧？<08>
+That's right.<08>,text,That's right.<08>,没错。<08>
+How are you holding up?<08><04>There are 2 exits. But one of those is locked.<08>,text,How are you holding up?<08><04>There are 2 exits. But one of those is locked.<08>,撑得住吗？<08><04>这里有 2 个出口，但其中一个处于锁定状态。<08>
+Aren't you going to tell me which one?<08>,text,Aren't you going to tell me which one?<08>,你不打算告诉我到底是哪一个吗？<08>
+"I think you're old enough to figure it out for
+yourself.<08>",text,"I think you're old enough to figure it out for
+yourself.<08>",我想你已经够成熟，能自己找到答案了。<08>
+"This time I want you to take care of a job that
+was left unfinished.<08>",text,"This time I want you to take care of a job that
+was left unfinished.<08>",这一次，我要你去解决一桩先前未完的工作。<08>
+Unfinished?<08>,text,Unfinished?<08>,未完的工作？<08>
+"There was one area you couldn't access since it
+was locked.<08><04>I've managed to unlock it. Go in and destroy the
+core.<08>",text,"There was one area you couldn't access since it
+was locked.<08><04>I've managed to unlock it. Go in and destroy the
+core.<08>",之前有一处区域因被封锁而无法进入。<08><04>我已经设法替你解锁了。进去摧毁里面的核心。<08>
+"The enemies in this area are expected to be much
+tougher than when you last infiltrated the area.<08><04>Be careful.<08>",text,"The enemies in this area are expected to be much
+tougher than when you last infiltrated the area.<08><04>Be careful.<08>",该区域的敌人预计比你上次潜入时更加棘手。<08><04>务必小心。<08>
+Copy that.<08>,text,Copy that.<08>,收到。<08>
+"I've managed to unlock the front hatch.
+Go through there.<08>",text,"I've managed to unlock the front hatch.
+Go through there.<08>","我已经成功解锁正面舱门。
+直接从那里进去。<08>"
+This is the next target.<08><0d>,text,This is the next target.<08><0d>,下一个目标就在这里。<08><0d>
+Are you going to tell me what it is?<08>,text,Are you going to tell me what it is?<08>,这次能告诉我那究竟是什么了吗？<08>
+"I can't transport you directly to where the target
+is so you'll have to infiltrate from the outside.<08>",text,"I can't transport you directly to where the target
+is so you'll have to infiltrate from the outside.<08>",我无法直接把你传送到目标位置，你必须从外部突入潜行。<08>
+"When you are transported, the sun will be on the
+other side of the planet. It'll be dark so watch out<08><04>for the searchlights.<08><04>If they spot you, the night will turn into a shooting
+spree and you will be the target!<08>",text,"When you are transported, the sun will be on the
+other side of the planet. It'll be dark so watch out<08><04>for the searchlights.<08><04>If they spot you, the night will turn into a shooting
+spree and you will be the target!<08>",当你被传送抵达时，太阳正位于行星背面。四周会很暗，千万避开<08><04>探照灯。<08><04>一旦被发现，整片夜色就会变成枪林弹雨，而你就是唯一靶子！<08>
+How disturbing.<08>,text,How disturbing.<08>,听起来真够不祥的。<08>
+I'll transport you now.<08>,text,I'll transport you now.<08>,现在开始传送。<08>
+"I was able to unlock the door that was locked in
+your previous mission.<08><04>Sorry but I'm afraid you need to go there again.<08>",text,"I was able to unlock the door that was locked in
+your previous mission.<08><04>Sorry but I'm afraid you need to go there again.<08>",我把你上次任务中锁着的那扇门打开了。<08><04>抱歉，恐怕你还得再去那里跑一趟。<08>
+"This isn't a very efficient way of working you
+know. Plus I think using the transportator is bad for<08><04>my skin.<08>",text,"This isn't a very efficient way of working you
+know. Plus I think using the transportator is bad for<08><04>my skin.<08>",这种工作方式可真不算高效。而且我觉得老用传送装置对<08><04>我的皮肤可不太好。<08>
+You're just making excuses.<08>,text,You're just making excuses.<08>,你纯粹是在找借口。<08>
+Yes.<08>,text,Yes.<08>,是啊。<08>
+"Anyway, this time it'll be like a walk in the park.<08><04>There are life signs coming from inside the CAMS
+facility.<08>",text,"Anyway, this time it'll be like a walk in the park.<08><04>There are life signs coming from inside the CAMS
+facility.<08>",不管怎样，这次任务就像饭后散步一样轻松。<08><04>CAMS 设施内部侦测到了生命反应。<08>
+Human?<08>,text,Human?<08>,是人类吗？<08>
+Don't know.<08><04>I want you to investigate it.<08>,text,Don't know.<08><04>I want you to investigate it.<08>,还不清楚。<08><04>我要你进去一探究竟。<08>
+"How's it going?<08><04>This time getting in is easy. Just use the front
+entrance.<08>",text,"How's it going?<08><04>This time getting in is easy. Just use the front
+entrance.<08>",情况如何？<08><04>这次潜入简单得多，直接走正门就行。<08>
+I bet you're not going to tell me the way.<08>,text,I bet you're not going to tell me the way.<08>,我赌你多半又不会给我指路。<08>
+You're right again.<08>,text,You're right again.<08>,又被你猜中了。<08>
+"You said it'd be like a walk in the park. But it wasn't
+that easy.<08>",text,"You said it'd be like a walk in the park. But it wasn't
+that easy.<08>",你嘴上说是饭后散步，实际上哪有这么轻松。<08>
+But it's more exciting that way. Don't you think?<08>,text,But it's more exciting that way. Don't you think?<08>,不过那样不是更有刺激感吗，你不觉得？<08>
+Why is there someone that looks exactly like me?<08>,text,Why is there someone that looks exactly like me?<08>,为什么那里会有一个长得和我一模一样的人？<08>
+What's the status?<08>,text,What's the status?<08>,情况怎样？<08>
+Looks like it's still alive.<08>,text,Looks like it's still alive.<08>,看起来她还有生命体征。<08>
+That's unfortunate.<08>,text,That's unfortunate.<08>,真是遗憾。<08>
+What do you mean?<08>,text,What do you mean?<08>,你这话是什么意思？<08>
+"Well, the CAMS self-destruct located in that area
+has been activated.<08><04>You can exit using the Energy Pod I've located. It's
+on your way out.<08><04>Also I've turned on the green emergency lighting on
+the doors. That's your guide to the Energy Pod.<08>",text,"Well, the CAMS self-destruct located in that area
+has been activated.<08><04>You can exit using the Energy Pod I've located. It's
+on your way out.<08><04>Also I've turned on the green emergency lighting on
+the doors. That's your guide to the Energy Pod.<08>",嗯，那个区域的 CAMS 自毁程序已经被触发了。<08><04>你可以借助我定位到的能量逃生舱撤离，它就在你出去的路上。<08><04>另外我打开了门上的绿色应急指示灯，跟着它就能找到逃生舱。<08>
+How much time do I have?<08>,text,How much time do I have?<08>,我还剩多少时间？<08>
+"5 minutes.
+Better forget about trying to rescue her. There's<08><04>no time for that.<08>",text,"5 minutes.
+Better forget about trying to rescue her. There's<08><04>no time for that.<08>","5 分钟。
+别再想着去救她了，现在根本<08><04>没有多余的时间。<08>"
+What was that all about?<08>,text,What was that all about?<08>,刚才那一切到底是怎么回事？<08>
+"Oh you mean the subject we had to leave behind?
+That was very unfortunate.<08>",text,"Oh you mean the subject we had to leave behind?
+That was very unfortunate.<08>","哦，你是说不得不留在里面的那个实验体吗？
+真是万分可惜。<08>"
+"Tell me...
+Who am I?<08>",text,"Tell me...
+Who am I?<08>","告诉我……
+我究竟是谁？<08>"
+"Okay, we'll talk about it when this is all over.<08>",text,"Okay, we'll talk about it when this is all over.<08>",好吧，等这一切都结束后，我再把真相全都告诉你。<08>
+You're bossy.<08>,text,You're bossy.<08>,你真够专横的。<08>
+Because I'm your client.<08><04>I think your mission is almost over.<08>,text,Because I'm your client.<08><04>I think your mission is almost over.<08>,因为我是你的委托人。<08><04>我想，你的任务很快就要画上句号了。<08>
+Are you going to let me go?<08>,text,Are you going to let me go?<08>,你真的会放我离开吗？<08>
+"When it's all over.<08><04>Find and destroy the Energy Reactor. The passage
+forks out in many directions so be careful.<08>",text,"When it's all over.<08><04>Find and destroy the Energy Reactor. The passage
+forks out in many directions so be careful.<08>",一切结束之时自会兑现。<08><04>找到并摧毁能量反应堆。前方通道岔路众多，务必小心。<08>
+Thanks but I'll go as I please.<08>,text,Thanks but I'll go as I please.<08>,谢了，但我历来随心而行。<08>
+See you later.<08>,text,See you later.<08>,回头见。<08>
+This is your last mission.<08>,text,This is your last mission.<08>,这是你的最终任务。<08>
+"Alraune, the CAMS central core is your target.
+Destroy it.<08>",text,"Alraune, the CAMS central core is your target.
+Destroy it.<08>","奥拉涅（Alraune），CAMS 的中枢核心就是你的目标。
+摧毁它。<08>"
+Finally the head honcho...<08>,text,Finally the head honcho...<08>,终于轮到幕后头目出场了……<08>
+I'm transporting you now.<08>,text,I'm transporting you now.<08>,现在送你过去。<08>
+Congratulations on a job well done.<08>,text,Congratulations on a job well done.<08>,干得漂亮，任务圆满成功。<08>
+Go through the hatch in the back.<08>,text,Go through the hatch in the back.<08>,穿过后方的舱门。<08>
+There's more?<08>,text,There's more?<08>,还有下文？<08>
+You'll see.<08>,text,You'll see.<08>,去看看就知道了。<08>
+"How have you been?
+It's been half a year since we last spoke.<08>",text,"How have you been?
+It's been half a year since we last spoke.<08>","最近过得怎么样？
+自上次通话以来，转眼已经过去半年了。<08>"
+"I'm on vacation.
+So find someone else for your job.<08>",text,"I'm on vacation.
+So find someone else for your job.<08>","我正在休假呢。
+这单活你还是另请高明吧。<08>"
+"How did you know I was going to ask you to do a
+job?<08>",text,"How did you know I was going to ask you to do a
+job?<08>",你怎么知道我正想找你接新任务？<08>
+"With you it's all business, no pleasure.<08>",text,"With you it's all business, no pleasure.<08>",跟你打交道永远只有公事，半点乐趣也没有。<08>
+"Your intuition must have something to do with us
+having the same DNA.<08>",text,"Your intuition must have something to do with us
+having the same DNA.<08>",你这份直觉，大概跟我们拥有相同的 DNA 有关吧。<08>
+"Anyway, if you'll excuse me...<08>",text,"Anyway, if you'll excuse me...<08>",总之，如果没什么别的事，我就先挂了……<08>
+That's not a nice way to treat your client.<08>,text,That's not a nice way to treat your client.<08>,这么对待你的雇主可不太礼貌啊。<08>
+I'm on vacation.<08>,text,I'm on vacation.<08>,我还在休假中。<08>
+Don't give me a hard time.<08>,text,Don't give me a hard time.<08>,就别再为难我了。<08>
+I think we're even there.<08>,text,I think we're even there.<08>,这点上咱们算扯平了。<08>
+Right.<08><04>Maybe I'll call again at a later time then.<08>,text,Right.<08><04>Maybe I'll call again at a later time then.<08>,好吧。<08><04>那我过段时间再联系你吧。<08>
+Later.<08>,text,Later.<08>,再会。<08>
+Ooops.<08>,text,Ooops.<08>,哎呀。<08>
+"Not in the shower please.
+How about some privacy?<08>",text,"Not in the shower please.
+How about some privacy?<08>","拜托，洗澡的时候别来偷看行吗？
+尊重一下别人隐私好不好？<08>"
+"What's there to hide.
+We have identical bodies.<08>",text,"What's there to hide.
+We have identical bodies.<08>","有什么好遮掩的。
+我们的身体本来就一模一样。<08>"
+Yeah?<08>,text,Yeah?<08>,是吗？<08>
+"Nice tatoo.
+Why a butterfly?<08>",text,"Nice tatoo.
+Why a butterfly?<08>","纹身挺漂亮的。
+为什么选了蝴蝶？<08>"
+I'll leave it to your imagination.<08><04>You know I never asked your name.<08>,text,I'll leave it to your imagination.<08><04>You know I never asked your name.<08>,留给你自己想象吧。<08><04>说起来，我好像一直没问过你的名字。<08>
+Dominique Z. Schenider<08>,text,Dominique Z. Schenider<08>,多米妮克·Z·施耐德<08>
+Maybe we're of the same descent.<08>,text,Maybe we're of the same descent.<08>,或许我们出自同一血脉。<08>
+Maybe...<08>,text,Maybe...<08>,也许吧……<08>
+Maybe not.<08>,text,Maybe not.<08>,或许不是。<08>
+You're you and I'm me. Right?<08>,text,You're you and I'm me. Right?<08>,你是你，我是我，对吧？<08>
+Right but I sense something else is on your mind.<08>,text,Right but I sense something else is on your mind.<08>,没错，但我感觉你心里还藏着别的心事。<08>
+Yes it's about another job.<08>,text,Yes it's about another job.<08>,是的，又有一桩新工作。<08>
+"I'll do it if I'm your client this time and you do all the
+fighting.<08>",text,"I'll do it if I'm your client this time and you do all the
+fighting.<08>",除非这次换我当委托人，所有战斗都由你亲自上阵。<08>
+I'll explain your next mission.<08>,text,I'll explain your next mission.<08>,我来为你说明下一个任务。<08>
+You never listen do you?<08>,text,You never listen do you?<08>,你从来都不听人把话说完，对吧？<08>
+"Change and power-up your Aegis Suit.
+Buy new Aegis Suits and Extra Continues.",text,"Change and power-up your Aegis Suit.
+Buy new Aegis Suits and Extra Continues.","更换或强化你的神盾装甲，
+购买全新装甲与额外续关次数。"
+"The Trial Mission will allow you to hone your techniques
+and earn extra points.",text,"The Trial Mission will allow you to hone your techniques
+and earn extra points.",模拟实战任务可让你磨炼战斗技巧并赚取额外点数。
+Execute your next mission- Mission No.<0a>,text,Execute your next mission- Mission No.<0a>,开始执行下一项任务 — 任务编号 <0a>
+Save your current progress.,text,Save your current progress.,保存当前游戏进度。
+GAME START,text,GAME START,开始游戏
+START,text,START,开始
+PRESS START BUTTON,text,PRESS START BUTTON,请按 START 键开始
+CONTINUE,text,CONTINUE,继续游戏
+MISSION SELECT,text,MISSION SELECT,任务选择
+STAGE SELECT,text,STAGE SELECT,关卡选择
+REPLAY,text,REPLAY,重玩任务
+EXIT,text,EXIT,退出
+BACK,text,BACK,返回
+RETURN TO TITLE,text,RETURN TO TITLE,返回标题画面
+PAUSE,text,PAUSE,暂停
+RESUME,text,RESUME,继续游戏
+RETRY,text,RETRY,重新挑战
+RESTART,text,RESTART,重新开始
+YES,text,YES,是
+NO,text,NO,否
+OK,text,OK,确定
+CANCEL,text,CANCEL,取消
+ON,text,ON,开
+OFF,text,OFF,关
+DIFFICULTY,text,DIFFICULTY,难度选择
+SELECT DIFFICULTY,text,SELECT DIFFICULTY,选择游戏难度
+EASY MODE,text,EASY MODE,简单模式
+NORMAL MODE,text,NORMAL MODE,普通模式
+HARD MODE,text,HARD MODE,困难模式
+SOUND MODE,text,SOUND MODE,声音模式
+DOLBY PRO LOGIC II,text,DOLBY PRO LOGIC II,杜比环绕声 (DPL2)
+VIBRATION,text,VIBRATION,手柄震动
+CONTROLLER,text,CONTROLLER,控制器设置
+SCREEN ADJUST,text,SCREEN ADJUST,画面位置调整
+SOUND TEST,text,SOUND TEST,音乐音效鉴赏
+SUIT SHOP,text,SUIT SHOP,装甲商店
+TRIAL MISSION,text,TRIAL MISSION,模拟实战任务
+SORTIE,text,SORTIE,出击
+SAVE,text,SAVE,保存
+LOAD,text,LOAD,读取
+SAVE DATA,text,SAVE DATA,保存存档
+LOAD DATA,text,LOAD DATA,读取存档
+SAVE COMPLETE,text,SAVE COMPLETE,保存完成。
+LOAD COMPLETE,text,LOAD COMPLETE,读取完成。
+SAVING...,text,SAVING...,正在保存……请勿关闭电源。
+LOADING...,text,LOADING...,正在读取……请勿拔出记忆卡。
+NO SAVE DATA,text,NO SAVE DATA,没有发现 P.N.03 的存档数据。
+NO MEMORY CARD,text,NO MEMORY CARD,插槽 A 中未检测到记忆卡。
+FORMAT MEMORY CARD?,text,FORMAT MEMORY CARD?,是否格式化记忆卡？
+OVERWRITE SAVE DATA?,text,OVERWRITE SAVE DATA?,确定要覆盖当前存档数据吗？
+SLOT A,text,SLOT A,插槽 A
+SLOT B,text,SLOT B,插槽 B
+POWER UP,text,POWER UP,强化装甲
+BUY NEW SUIT,text,BUY NEW SUIT,购买新装甲
+CHANGE SUIT,text,CHANGE SUIT,更换装甲
+EQUIP,text,EQUIP,装备
+REMOVE,text,REMOVE,卸下
+POINTS,text,POINTS,持有点数
+PRICE,text,PRICE,价格
+LEVEL,text,LEVEL,等级
+MAX,text,MAX,已满级
+CLEAR BONUS,text,CLEAR BONUS,通关奖励
+NO DAMAGE BONUS,text,NO DAMAGE BONUS,无伤奖励
+TOTAL SCORE,text,TOTAL SCORE,总分
+RANK,text,RANK,评价等级
+MISSION START,text,MISSION START,任务开始
+MISSION FAILED,text,MISSION FAILED,任务失败
+GAME OVER,text,GAME OVER,游戏结束
+WARNING,text,WARNING,警告
+LOCK ON,text,LOCK ON,锁定目标
+PRESS START TO CONTINUE,text,PRESS START TO CONTINUE,按 START 键继续
+RESET GAME,text,RESET GAME,重置游戏
+ARE YOU SURE?,text,ARE YOU SURE?,确定要执行该操作吗？
+TYPE A,text,TYPE A,方案 A
+TYPE B,text,TYPE B,方案 B
+TYPE C,text,TYPE C,方案 C
+TYPE D,text,TYPE D,方案 D
+TDTD,iso:/id/eng/trialrank_e.dat,TDTD,
+EDED,iso:/id/eng/trialrank_e.dat,EDED,
+EDE0,iso:/id/eng/trialrank_e.dat,EDE0,
+EDDT,iso:/id/eng/trialrank_e.dat,EDDT,
+DDTD,iso:/id/eng/trialrank_e.dat,DDTD,

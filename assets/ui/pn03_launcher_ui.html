@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>P.N.03 // GPNE08 WINDOWS HD LAUNCHER</title>
+<style>
+  :root {
+    --bg-obsidian: #080c12;
+    --bg-grid: rgba(0, 229, 255, 0.045);
+    --card-bg: rgba(18, 25, 36, 0.92);
+    --card-header: rgba(34, 46, 64, 0.85);
+    --border-steel: #3a4b63;
+    --cyan-glow: #00e5ff;
+    --cyan-dim: rgba(0, 229, 255, 0.18);
+    --orange-led: #ff6d00;
+    --orange-dim: #4d2608;
+    --text-main: #eef5fc;
+    --text-muted: #93a8c1;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+  body {
+    background-color: var(--bg-obsidian);
+    background-image:
+      linear-gradient(to right, var(--bg-grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--bg-grid) 1px, transparent 1px),
+      radial-gradient(circle at 50% 15%, rgba(0, 229, 255, 0.12), transparent 65%);
+    background-size: 28px 28px, 28px 28px, 100% 100%;
+    color: var(--text-main);
+    font-family: "Segoe UI", "Rajdhani", "Microsoft YaHei", sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+  }
+  .launcher-frame {
+    width: 100%;
+    max-width: 1180px;
+    background: rgba(10, 14, 21, 0.96);
+    border: 1px solid #2b3b52;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.85), 0 0 18px rgba(0, 229, 255, 0.12);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+  /* Top Title Bar */
+  .title-bar {
+    height: 44px;
+    background: linear-gradient(90deg, #101824 0%, #192436 60%, #101824 100%);
+    border-bottom: 1px solid #2b3b52;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px;
+  }
+  .title-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+  }
+  .hex-logo {
+    width: 22px;
+    height: 22px;
+    stroke: var(--cyan-glow);
+    filter: drop-shadow(0 0 6px var(--cyan-glow));
+  }
+  .title-left span.sub {
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+  .win-controls {
+    display: flex;
+    gap: 14px;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+  /* ISO Path Selector Bar */
+  .iso-bar {
+    margin: 18px 22px 16px;
+    padding: 10px 14px;
+    background: rgba(14, 20, 29, 0.95);
+    border: 1px solid var(--border-steel);
+    border-left: 3px solid var(--cyan-glow);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  .iso-path-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    font-size: 14px;
+    letter-spacing: 0.6px;
+  }
+  .iso-label {
+    color: var(--text-muted);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .iso-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    font-family: "Consolas", monospace;
+    font-size: 14px;
+    outline: none;
+  }
+  .iso-badge {
+    color: var(--cyan-glow);
+    font-family: "Consolas", monospace;
+    font-size: 12.5px;
+    padding: 3px 8px;
+    background: rgba(0, 229, 255, 0.1);
+    border: 1px solid rgba(0, 229, 255, 0.35);
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .btn-browse {
+    background: linear-gradient(180deg, #e6eef8 0%, #c3d2e4 100%);
+    color: #0b121c;
+    border: 1px solid #ffffff;
+    padding: 7px 18px;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.8px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .btn-browse:hover {
+    background: #ffffff;
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
+  }
+  /* Main 3-Card Grid */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    padding: 0 22px;
+  }
+  .cyber-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-steel);
+    border-radius: 5px;
+    clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+    display: flex;
+    flex-direction: column;
+    min-height: 410px;
+    position: relative;
+  }
+  .card-header {
+    background: linear-gradient(115deg, rgba(46, 62, 84, 0.9) 0%, rgba(28, 38, 52, 0.9) 75%, transparent 100%);
+    border-bottom: 1px solid var(--border-steel);
+    padding: 11px 18px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-body {
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    flex: 1;
+  }
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .field-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #d0deee;
+  }
+  .led-pills {
+    display: flex;
+    gap: 5px;
+  }
+  .led-pill {
+    width: 16px;
+    height: 7px;
+    border-radius: 3px;
+    background: var(--orange-dim);
+  }
+  .led-pill.on {
+    background: var(--orange-led);
+    box-shadow: 0 0 6px var(--orange-led);
+  }
+  select.cyber-select {
+    width: 100%;
+    background: rgba(12, 18, 26, 0.95);
+    color: var(--text-main);
+    border: 1px solid #3d526d;
+    padding: 8px 11px;
+    border-radius: 3px;
+    font-size: 13.5px;
+    font-family: inherit;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  select.cyber-select:focus, select.cyber-select.highlight {
+    border-color: var(--cyan-glow);
+    box-shadow: 0 0 8px var(--cyan-dim);
+    color: var(--cyan-glow);
+    font-weight: 600;
+  }
+  /* Toggle Row */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0 4px;
+    font-size: 13px;
+  }
+  .cyber-switch {
+    width: 52px;
+    height: 24px;
+    background: #1c2838;
+    border: 1px solid #3d526d;
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .cyber-switch.active {
+    background: rgba(0, 229, 255, 0.22);
+    border-color: var(--cyan-glow);
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.35);
+  }
+  .cyber-switch .knob {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #8ea4be;
+    position: absolute;
+    top: 2px;
+    left: 3px;
+    transition: all 0.2s;
+  }
+  .cyber-switch.active .knob {
+    left: 29px;
+    background: var(--cyan-glow);
+    box-shadow: 0 0 6px var(--cyan-glow);
+  }
+  .cyber-switch .sw-text {
+    position: absolute;
+    top: 4px;
+    left: 7px;
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--cyan-glow);
+    opacity: 0;
+  }
+  .cyber-switch.active .sw-text { opacity: 1; }
+
+  /* 3D GX Preview Box inside Center Card */
+  .gx-preview-box {
+    margin-top: auto;
+    background: rgba(8, 13, 20, 0.9);
+    border: 1px solid #2b3d54;
+    border-radius: 4px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .gx-preview-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--cyan-glow);
+    font-family: "Consolas", monospace;
+  }
+  canvas#gxCanvas {
+    width: 100%;
+    height: 118px;
+    background: radial-gradient(circle at center, rgba(0, 229, 255, 0.1), rgba(5, 9, 14, 0.95));
+    border-radius: 3px;
+  }
+
+  /* Preset Type A-D Buttons */
+  .preset-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+  }
+  .preset-btns {
+    display: flex;
+    gap: 6px;
+  }
+  .preset-btn {
+    width: 30px;
+    height: 26px;
+    background: rgba(14, 21, 31, 0.9);
+    border: 1px solid #415672;
+    color: var(--text-main);
+    font-weight: 700;
+    font-size: 12.5px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  .preset-btn.active {
+    background: rgba(0, 229, 255, 0.22);
+    border-color: var(--cyan-glow);
+    color: var(--cyan-glow);
+    box-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
+  }
+  /* Wireframe Xbox Controller SVG */
+  .controller-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4px 0;
+  }
+  .controller-svg {
+    width: 245px;
+    height: 145px;
+    filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.22));
+  }
+  /* Sliders */
+  .slider-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  input[type="range"].cyber-slider {
+    flex: 1;
+    accent-color: var(--cyan-glow);
+    cursor: pointer;
+  }
+  .slider-val {
+    font-family: "Consolas", monospace;
+    font-size: 13px;
+    width: 42px;
+    text-align: right;
+    color: var(--text-main);
+  }
+
+  /* Bottom Bar */
+  .bottom-bar {
+    margin: 18px 22px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .diag-box {
+    font-family: "Consolas", monospace;
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: var(--orange-led);
+    background: rgba(15, 12, 10, 0.75);
+    border-left: 2px solid var(--orange-led);
+    padding: 6px 12px;
+  }
+  .launch-btn {
+    background: linear-gradient(90deg, #00c8ff 0%, #00e5ff 50%, #00b8f0 100%);
+    color: #041019;
+    border: 2px solid #99f5ff;
+    padding: 12px 32px;
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 1.4px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 0 22px rgba(0, 229, 255, 0.55);
+    transition: all 0.15s ease;
+  }
+  .launch-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 32px rgba(0, 229, 255, 0.9);
+    background: #33ecff;
+  }
+  @media (max-width: 960px) {
+    .cards-grid { grid-template-columns: 1fr; }
+    .bottom-bar { flex-direction: column; align-items: stretch; }
+  }
+</style>
+</head>
+<body>
+<div class="launcher-frame">
+  <!-- Top Title Bar -->
+  <div class="title-bar">
+    <div class="title-left">
+      <svg class="hex-logo" viewBox="0 0 24 24" fill="none" stroke-width="2">
+        <polygon points="12 2 21 7 21 17 12 22 3 17 3 7"></polygon>
+        <polygon points="12 6 17 9 17 15 12 18 7 15 7 9" fill="rgba(0,229,255,0.25)"></polygon>
+      </svg>
+      <div>P.N.03 <span class="sub">// GPNE08 WINDOWS HD LAUNCHER</span></div>
+    </div>
+    <div class="win-controls"><span>_</span><span>✕</span></div>
+  </div>
+
+  <!-- ISO File Selector Bar -->
+  <div class="iso-bar">
+    <div class="iso-path-box">
+      <span class="iso-label">ISO PATH:</span>
+      <input id="isoPathInput" class="iso-input" type="text" value="D:\Games\PN03_GPNE08.iso" />
+      <span id="isoBadge" class="iso-badge">[MOUNTED - 700 FILES | 0 BUILT-IN ASSETS]</span>
+    </div>
+    <input id="isoFilePicker" type="file" accept=".iso,.gcm,.dol" style="display:none" />
+    <button class="btn-browse" onclick="document.getElementById('isoFilePicker').click()">BROWSE ISO</button>
+  </div>
+
+  <!-- Three Core Configuration Cards (1:1 Visual Reference Layout) -->
+  <div class="cards-grid">
+    <!-- Card 1: 3D GRAPHICS & DISPLAY -->
+    <div class="cyber-card">
+      <div class="card-header">
+        <span>3D GRAPHICS &amp; DISPLAY</span>
+      </div>
+      <div class="card-body">
+        <div class="field-group">
+          <div class="field-label-row"><span>Resolution</span></div>
+          <select id="selResolution" class="cyber-select highlight" onchange="syncState()">
+            <option value="3840x2160" selected>3840x2160 4K (6x EFB)</option>
+            <option value="2560x1440">2560x1440 QHD (4x EFB)</option>
+            <option value="1920x1080">1920x1080 FHD (3x EFB)</option>
+            <option value="1280x720">1280x720 HD (2x EFB)</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label-row"><span>Display Mode</span></div>
+          <select id="selDisplayMode" class="cyber-select" onchange="syncState()">
+            <option value="1" selected>Borderless Fullscreen</option>
+            <option value="2">Exclusive Fullscreen</option>
+            <option value="0">Windowed</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label-row">
+            <span>Anti-Aliasing</span>
+            <div class="led-pills"><span class="led-pill on"></span><span class="led-pill on"></span></div>
+          </div>
+          <select id="selAA" class="cyber-select" onchange="syncState()">
+            <option value="8" selected>8x MSAA + FXAA Active</option>
+            <option value="4">4x MSAA + FXAA Active</option>
+            <option value="2">2x MSAA</option>
+            <option value="0">Off</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label-row">
+            <span>Aspect Ratio</span>
+            <div class="led-pills"><span class="led-pill on"></span><span class="led-pill"></span></div>
+          </div>
+          <select id="selAspect" class="cyber-select" onchange="syncState()">
+            <option value="1" selected>16:9 Widescreen + Remove Letterbox</option>
+            <option value="2">21:9 Ultrawide + Remove Letterbox</option>
+            <option value="0">4:3 Original (640x480)</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label-row">
+            <span>Anisotropic Filtering</span>
+            <div class="led-pills"><span class="led-pill on"></span><span class="led-pill"></span></div>
+          </div>
+          <select id="selAniso" class="cyber-select" onchange="syncState()">
+            <option value="16" selected>16x</option>
+            <option value="8">8x</option>
+            <option value="4">4x</option>
+            <option value="1">1x</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: LOCALIZATION & SYSTEM -->
+    <div class="cyber-card">
+      <div class="card-header">
+        <span>LOCALIZATION &amp; SYSTEM</span>
+      </div>
+      <div class="card-body">
+        <div class="field-group">
+          <div class="field-label-row"><span>Language (CMesCtrl::MesSetLanguage Hook)</span></div>
+          <select id="selLang" class="cyber-select highlight" onchange="syncState()">
+            <option value="6" selected>简体中文 (Simplified Chinese HD Font)</option>
+            <option value="1">English (US Default)</option>
+            <option value="3">French (/id/fra)</option>
+            <option value="2">German (/id/ger)</option>
+            <option value="5">Italian (/id/ita)</option>
+            <option value="4">Spanish (/id/spa)</option>
+          </select>
+        </div>
+
+        <div class="toggle-row">
+          <span>Tools.rel Sound Test &amp; Debug Menu</span>
+          <div id="swToolsRel" class="cyber-switch active" onclick="toggleToolsRel()">
+            <span class="sw-text">ON</span>
+            <div class="knob"></div>
+          </div>
+        </div>
+
+        <!-- Live 3D GX Wireframe Preview -->
+        <div class="gx-preview-box">
+          <div class="gx-preview-header">
+            <span>GX3DInterface // D3D11 TEV PREVIEW</span>
+            <span id="gxOrthoLabel">ORTHO: [-106.7 .. 746.7]</span>
+          </div>
+          <canvas id="gxCanvas" width="320" height="118"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3: XBOX XINPUT CONTROLLER -->
+    <div class="cyber-card">
+      <div class="card-header">
+        <span>XBOX XINPUT CONTROLLER</span>
+      </div>
+      <div class="card-body">
+        <div class="preset-row">
+          <span>Preset Type (keyConfig A-D)</span>
+          <div class="preset-btns">
+            <button class="preset-btn active" onclick="setPreset(0, this)">A</button>
+            <button class="preset-btn" onclick="setPreset(1, this)">B</button>
+            <button class="preset-btn" onclick="setPreset(2, this)">C</button>
+            <button class="preset-btn" onclick="setPreset(3, this)">D</button>
+          </div>
+        </div>
+
+        <!-- Illuminated Wireframe Xbox Controller SVG -->
+        <div class="controller-wrap">
+          <svg class="controller-svg" viewBox="0 0 260 155" fill="none">
+            <!-- Outer Body Wireframe -->
+            <path d="M65 28 C90 22, 170 22, 195 28 C222 35, 242 75, 236 122 C232 142, 212 146, 196 128 L175 104 C155 100, 105 100, 85 104 L64 128 C48 146, 28 142, 24 122 C18 75, 38 35, 65 28 Z"
+                  stroke="#5b7898" stroke-width="2" fill="rgba(16,28,44,0.65)" />
+            <!-- Internal Grid Lines -->
+            <path d="M65 28 Q130 45 195 28 M45 75 Q130 92 215 75 M85 104 L95 40 M175 104 L165 40"
+                  stroke="rgba(0,229,255,0.22)" stroke-width="1" />
+            <!-- Xbox Guide Button -->
+            <circle cx="130" cy="44" r="9" stroke="#e2eefc" stroke-width="1.5" fill="rgba(0,229,255,0.15)" />
+            <!-- Left Stick (StickX / StickY) -->
+            <circle cx="76" cy="64" r="16" stroke="#00e5ff" stroke-width="2" fill="rgba(0,229,255,0.12)" />
+            <circle id="svgLeftStick" cx="76" cy="64" r="8" fill="#00e5ff" />
+            <line x1="76" y1="64" x2="26" y2="64" stroke="#00e5ff" stroke-width="1.2" />
+            <polygon points="20,59 26,64 20,69 14,64" fill="#00e5ff" />
+            <!-- D-Pad -->
+            <path d="M96 82 H108 V92 H118 V104 H108 V114 H96 V104 H86 V92 H96 Z"
+                  stroke="#89a4c2" stroke-width="1.4" fill="rgba(12,18,28,0.8)" />
+            <!-- Right Stick (C-Stick) -->
+            <circle cx="158" cy="94" r="16" stroke="#00e5ff" stroke-width="2" fill="rgba(0,229,255,0.12)" />
+            <circle id="svgRightStick" cx="158" cy="94" r="8" fill="#00e5ff" />
+            <line x1="158" y1="94" x2="158" y2="136" stroke="#00e5ff" stroke-width="1.2" />
+            <polygon points="153,140 158,134 163,140 158,146" fill="#00e5ff" />
+            <!-- ABXY Buttons -->
+            <circle cx="192" cy="50" r="7" stroke="#ffd600" stroke-width="1.5" />
+            <text x="189" y="54" fill="#ffd600" font-size="9" font-weight="bold">Y</text>
+            <circle cx="177" cy="64" r="7" stroke="#00e5ff" stroke-width="1.5" />
+            <text x="174" y="68" fill="#00e5ff" font-size="9" font-weight="bold">X</text>
+            <circle cx="207" cy="64" r="7" stroke="#ff5252" stroke-width="1.5" />
+            <text x="204" y="68" fill="#ff5252" font-size="9" font-weight="bold">B</text>
+            <circle cx="192" cy="78" r="7" stroke="#69f0ae" stroke-width="1.5" />
+            <text x="189" y="82" fill="#69f0ae" font-size="9" font-weight="bold">A</text>
+            <line x1="214" y1="64" x2="244" y2="64" stroke="#00e5ff" stroke-width="1.2" />
+            <polygon points="244,59 250,64 244,69 238,64" fill="#00e5ff" />
+          </svg>
+        </div>
+
+        <div class="slider-group">
+          <div class="field-label-row"><span>Left/Right Stick Deadzone</span></div>
+          <div class="slider-row">
+            <input id="rngDeadzone" class="cyber-slider" type="range" min="5" max="40" value="15" oninput="syncState()" />
+            <span id="lblDeadzone" class="slider-val">15%</span>
+          </div>
+        </div>
+
+        <div class="slider-group">
+          <div class="field-label-row"><span>Dual-Motor Rumble (VibControl)</span></div>
+          <div class="slider-row">
+            <input id="rngRumble" class="cyber-slider" type="range" min="0" max="100" value="100" oninput="syncState()" />
+            <span id="lblRumble" class="slider-val">100%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Diagnostic & Launch Bar -->
+  <div class="bottom-bar">
+    <div id="diagReadout" class="diag-box">
+      DIAGNOSTIC STATUS READOUT: GPNE08 (MEKA) | 9,530 SYMBOLS | 6,340 RECOMP FUNCS<br/>
+      GX/VI 3D INTERFACE: 270 SDK HOOKS READY | TARGET: 3840x2160 4K (8x MSAA + FXAA)<br/>
+      LOCALIZATION OVERLAY: zh_CN ACTIVE (0x8009F12C UNLOCKED) | PAD_DATA: 0x801C4A68
+    </div>
+    <button class="launch-btn" onclick="exportAndLaunch()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#041019" stroke-width="2.4">
+        <polygon points="12 2 21 7 21 17 12 22 3 17 3 7"></polygon>
+        <circle cx="12" cy="12" r="4" fill="#041019"></circle>
+      </svg>
+      <span>LAUNCH P.N.03 ENGINE</span>
+    </button>
+  </div>
+</div>
+
+<script>
+  let toolsRelActive = true;
+  let presetIndex = 0;
+
+  function toggleToolsRel() {
+    toolsRelActive = !toolsRelActive;
+    document.getElementById('swToolsRel').classList.toggle('active', toolsRelActive);
+    syncState();
+  }
+
+  function setPreset(idx, btn) {
+    presetIndex = idx;
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    syncState();
+  }
+
+  function getConfigObject() {
+    const [w, h] = document.getElementById('selResolution').value.split('x').map(Number);
+    const msaa = Number(document.getElementById('selAA').value);
+    const dz = Number(document.getElementById('rngDeadzone').value) / 100.0;
+    const rmb = Number(document.getElementById('rngRumble').value) / 100.0;
+    return {
+      runtime_mode: "live",
+      iso_path: document.getElementById('isoPathInput').value,
+      locale_overlay_path: "assets/locales/zh_CN.json",
+      save_dir: "saves",
+      backend: 0,
+      render_width: w,
+      render_height: h,
+      internal_scale_factor: w >= 3840 ? 6 : w >= 2560 ? 4 : w >= 1920 ? 3 : 2,
+      window_mode: Number(document.getElementById('selDisplayMode').value),
+      msaa_mode: msaa,
+      enable_fxaa: msaa >= 4,
+      anisotropic_filtering: Number(document.getElementById('selAniso').value),
+      aspect_ratio: Number(document.getElementById('selAspect').value),
+      remove_cinesco_bars: Number(document.getElementById('selAspect').value) !== 0,
+      disable_copy_deflicker: true,
+      vsync: true,
+      language: Number(document.getElementById('selLang').value),
+      enable_hd_chinese_font: true,
+      enable_xinput: true,
+      controller_index: 0,
+      control_scheme_preset: presetIndex,
+      left_stick_deadzone: dz,
+      right_stick_deadzone: dz,
+      trigger_threshold: 0.35,
+      enable_vibration: rmb > 0,
+      vibration_strength: rmb,
+      load_tools_rel_debug: toolsRelActive,
+      skip_launcher_gui: false
+    };
+  }
+
+  function syncState() {
+    const cfg = getConfigObject();
+    document.getElementById('lblDeadzone').textContent = Math.round(cfg.left_stick_deadzone * 100) + '%';
+    document.getElementById('lblRumble').textContent = Math.round(cfg.vibration_strength * 100) + '%';
+    const orthoText = cfg.aspect_ratio === 1 ? "ORTHO: [-106.7 .. 746.7] (16:9)"
+                    : cfg.aspect_ratio === 2 ? "ORTHO: [-240.0 .. 880.0] (21:9)"
+                                             : "ORTHO: [0.0 .. 640.0] (4:3)";
+    document.getElementById('gxOrthoLabel').textContent = orthoText;
+    const langNames = {6: "zh_CN (简体中文)", 1: "EN", 2: "DE", 3: "FR", 4: "ES", 5: "IT"};
+    document.getElementById('diagReadout').innerHTML =
+      `DIAGNOSTIC STATUS READOUT: GPNE08 (MEKA) | 9,530 SYMBOLS | 6,340 RECOMP FUNCS<br/>` +
+      `GX/VI 3D INTERFACE: 270 SDK HOOKS READY | TARGET: ${cfg.render_width}x${cfg.render_height} (${cfg.msaa_mode}x MSAA | ${cfg.anisotropic_filtering}x AF)<br/>` +
+      `LOCALIZATION: ${langNames[cfg.language]} | PRESET: TYPE ${['A','B','C','D'][cfg.control_scheme_preset]} | TOOLS.REL: ${cfg.load_tools_rel_debug ? 'ENABLED' : 'OFF'}`;
+  }
+
+  // Verify user-selected ISO header in browser via FileReader
+  document.getElementById('isoFilePicker').addEventListener('change', (ev) => {
+    const file = ev.target.files[0];
+    if (!file) return;
+    document.getElementById('isoPathInput').value = file.name;
+    const slice = file.slice(0, 0x440);
+    const reader = new FileReader();
+    reader.onload = () => {
+      const buf = new Uint8Array(reader.result);
+      if (buf.length >= 0x20) {
+        const gameId = String.fromCharCode(buf[0], buf[1], buf[2], buf[3], buf[4], buf[5]);
+        const magic = ((buf[0x1C] << 24) | (buf[0x1D] << 16) | (buf[0x1E] << 8) | buf[0x1F]) >>> 0;
+        if (magic === 0xC2339F3D) {
+          document.getElementById('isoBadge').textContent = `[VERIFIED: ${gameId} - NGC MAGIC 0xC2339F3D]`;
+        } else {
+          document.getElementById('isoBadge').textContent = `[SELECTED: ${file.name}]`;
+        }
+      }
+    };
+    reader.readAsArrayBuffer(slice);
+  });
+
+  function exportAndLaunch() {
+    const cfg = getConfigObject();
+    const blob = new Blob([JSON.stringify(cfg, null, 2)], {type: "application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "pn03_settings.json";
+    a.click();
+  }
+
+  // Animated 3D GX Aegis Energy Core Preview on #gxCanvas
+  const canvas = document.getElementById('gxCanvas');
+  const ctx2d = canvas.getContext('2d');
+  let angle = 0;
+  function renderGxPreview() {
+    ctx2d.clearRect(0, 0, canvas.width, canvas.height);
+    const cx = canvas.width / 2, cy = canvas.height / 2;
+    angle += 0.025;
+    // Draw rotating 3D hexagonal prism representing P.N.03 Aegis Barrier / GX Transform
+    ctx2d.strokeStyle = "#00e5ff";
+    ctx2d.lineWidth = 1.4;
+    for (let ring = -1; ring <= 1; ring += 2) {
+      ctx2d.beginPath();
+      for (let i = 0; i <= 6; i++) {
+        const a = angle + (i * Math.PI / 3);
+        const x = cx + Math.cos(a) * 48;
+        const y = cy + ring * 18 + Math.sin(a) * 16;
+        if (i === 0) ctx2d.moveTo(x, y);
+        else ctx2d.lineTo(x, y);
+      }
+      ctx2d.stroke();
+    }
+    for (let i = 0; i < 6; i++) {
+      const a = angle + (i * Math.PI / 3);
+      const x = cx + Math.cos(a) * 48;
+      const y1 = cy - 18 + Math.sin(a) * 16;
+      const y2 = cy + 18 + Math.sin(a) * 16;
+      ctx2d.beginPath();
+      ctx2d.moveTo(x, y1);
+      ctx2d.lineTo(x, y2);
+      ctx2d.stroke();
+    }
+    requestAnimationFrame(renderGxPreview);
+  }
+  renderGxPreview();
+</script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+# Copyrighted GameCube disc images, BIOS/console firmware & extracted assets (zero copyrighted assets)
+*.iso
+*.gcm
+*.nkit.iso
+*.ciso
+*.gcz
+*.rvz
+*.wia
+*.wbfs
+*.wux
+*.dol
+*.rel
+*.elf
+*.gci
+*.bnr
+*.bin
+*.img
+*.rom
+*bios*
+IPL*.bin
+dsp_*.bin
+PN03/
+Dolphin-x64/
+assets/ui/pn03_banner_96x32.bmp
+assets/ui/pn03_icon_32x32.bmp
+
+# Build outputs & MSVC / CMake artifacts
+build/
+out/
+.vs/
+CMakeUserPresets.json
+*.exe
+*.dll
+*.lib
+*.obj
+*.pdb
+*.ilk
+*.exp
+*.idb
+*.tlog
+
+# Keep curated prebuilt Windows x64 binaries in release/
+!release/
+!release/PN03_WinPort.exe
+!release/pn03_cpp_tests.exe
+!release/Launch_PN03.bat
+
+# Runtime logs, frame captures, recordings & stray dumps
+logs/
+*.log
+*.bmp
+!assets/ui/pn03_header_*.bmp
+*.mp4
+*.mkv
+*.avi
+*.mov
+
+# User runtime saves
+saves/*.sav
+saves/*.bin
+saves/*.raw
+
+# Archives & snapshots (large zips / duplicate snapshot trees)
+*.zip
+pn03_winport/
+handoff/*.zip
+handoff/PN03_4ISSUES_ARGON_BRIEF.md
+
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/

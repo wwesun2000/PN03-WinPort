@@ -1,0 +1,552 @@
+{
+  "module_id": 1,
+  "version": 2,
+  "base_load_vaddr": "0x80300000",
+  "source_plf_path": "D:\\MEKA\\Project\\NGC_Release\\module\\Tools.plf",
+  "num_sections": 24,
+  "bss_size": 103224,
+  "prolog_vaddr": "0x803072E4",
+  "epilog_vaddr": "0x80307310",
+  "unresolved_vaddr": "0x8030733C",
+  "discovered_functions_in_sec1": 94,
+  "main_dol_import_relocations_count": 593,
+  "internal_self_relocations_count": 1499,
+  "sections": [
+    {
+      "index": 0,
+      "file_offset": "0x000000",
+      "file_offset_int": 0,
+      "vaddr": "0x00000000",
+      "vaddr_int": 0,
+      "length_bytes": 0,
+      "executable": false
+    },
+    {
+      "index": 1,
+      "file_offset": "0x000108",
+      "file_offset_int": 264,
+      "vaddr": "0x80300000",
+      "vaddr_int": 2150629376,
+      "length_bytes": 29544,
+      "executable": true
+    },
+    {
+      "index": 2,
+      "file_offset": "0x000000",
+      "file_offset_int": 0,
+      "vaddr": "0x00000000",
+      "vaddr_int": 0,
+      "length_bytes": 0,
+      "executable": false
+    },
+    {
+      "index": 3,
+      "file_offset": "0x007470",
+      "file_offset_int": 29808,
+      "vaddr": "0x80307380",
+      "vaddr_int": 2150658944,
+      "length_bytes": 4,
+      "executable": false
+    },
+    {
+      "index": 4,
+      "file_offset": "0x007474",
+      "file_offset_int": 29812,
+      "vaddr": "0x803073A0",
+      "vaddr_int": 2150658976,
+      "length_bytes": 4,
+      "executable": false
+    },
+    {
+      "index": 5,
+      "file_offset": "0x007478",
+      "file_offset_int": 29816,
+      "vaddr": "0x803073C0",
+      "vaddr_int": 2150659008,
+      "length_bytes": 3972,
+      "executable": false
+    },
+    {
+      "index": 6,
+      "file_offset": "0x000000",
+      "file_offset_int": 0,
+      "vaddr": "0x00000000",
+      "vaddr_int": 0,
+      "length_bytes": 0,
+      "executable": false
+    },
+    {
+      "index": 7,
+      "file_offset": "0x008400",
+      "file_offset_int": 33792,
+      "vaddr": "0x80308360",
+      "vaddr_int": 2150663008,
+      "length_bytes": 1892,
+      "executable": false
+    },
+    {
+      "index": 8,
+      "file_offset": "0x000000",
+      "file_offset_int": 0,
+      "vaddr": "0x00000000",
+      "vaddr_int": 0,
+      "length_bytes": 0,
+      "executable": false
+    },
+    {
+      "index": 9,
+      "file_offset": "0x000000",
+      "file_offset_int": 0,
+      "vaddr": "0x80308AE0",
+      "vaddr_int": 2150664928,
+      "length_bytes": 103224,
+      "executable": false
+    },
+    {
+      "index": 10,
+      "file_offset": "0x000000",
+      "file_offset_int": 0,
+      "vaddr": "0x00000000",
+      "vaddr_int": 0,
+      "length_bytes": 0,
+      "executable": false
+    },
+    {
+      "index": 11,
+      "file_offset": "0x000000",
+      "file_offset_int": 0,
+      "vaddr": "0x00000000",
+      "vaddr_int": 0,
+      "length_bytes": 0,
+      "executable": false
+    },
+    {
+      "index": 12,
+      "file_offset": "0x000000",
+      "file_offset_int": 0,
+      "vaddr": "0x00000000",
+      "vaddr_int": 0,
+      "length_bytes": 0,
+      "executable": false
+    },
+    {
+      "index": 13,
+      "file_offset": "0x000000",
+      "file_offset_int": 0,
+      "vaddr": "0x00000000",
+      "vaddr_int": 0,
+      "length_bytes": 0,
+      "executable": false
+    },
+    {
+      "index": 14,
+      "file_offset": "0x000000",
+      "file_offset_int": 0,
+      "vaddr": "0x00000000",
+      "vaddr_int": 0,
+      "length_bytes": 0,
+      "executable": false
+    },
+    {
+      "index": 15,
+      "file_offset": "0x000000",
+      "file_offset_int": 0,
+      "vaddr": "0x00000000",
+      "vaddr_int": 0,
+      "length_bytes": 0,
+      "executable": false
+    },
+    {
+      "index": 16,
+      "file_offset": "0x000000",
+      "file_offset_int": 0,
+      "vaddr": "0x00000000",
+      "vaddr_int": 0,
+      "length_bytes": 0,
+      "executable": false
+    },
+    {
+      "index": 17,
+      "file_offset": "0x000000",
+      "file_offset_int": 0,
+      "vaddr": "0x00000000",
+      "vaddr_int": 0,
+      "length_bytes": 0,
+      "executable": false
+    },
+    {
+      "index": 18,
+      "file_offset": "0x000000",
+      "file_offset_int": 0,
+      "vaddr": "0x00000000",
+      "vaddr_int": 0,
+      "length_bytes": 0,
+      "executable": false
+    },
+    {
+      "index": 19,
+      "file_offset": "0x000000",
+      "file_offset_int": 0,
+      "vaddr": "0x00000000",
+      "vaddr_int": 0,
+      "length_bytes": 0,
+      "executable": false
+    },
+    {
+      "index": 20,
+      "file_offset": "0x000000",
+      "file_offset_int": 0,
+      "vaddr": "0x00000000",
+      "vaddr_int": 0,
+      "length_bytes": 0,
+      "executable": false
+    },
+    {
+      "index": 21,
+      "file_offset": "0x000000",
+      "file_offset_int": 0,
+      "vaddr": "0x00000000",
+      "vaddr_int": 0,
+      "length_bytes": 0,
+      "executable": false
+    },
+    {
+      "index": 22,
+      "file_offset": "0x000000",
+      "file_offset_int": 0,
+      "vaddr": "0x00000000",
+      "vaddr_int": 0,
+      "length_bytes": 0,
+      "executable": false
+    },
+    {
+      "index": 23,
+      "file_offset": "0x000000",
+      "file_offset_int": 0,
+      "vaddr": "0x00000000",
+      "vaddr_int": 0,
+      "length_bytes": 0,
+      "executable": false
+    }
+  ],
+  "imports": [
+    {
+      "module_id": 0,
+      "relocations_offset": "0x008B64",
+      "count": 593
+    },
+    {
+      "module_id": 1,
+      "relocations_offset": "0x009E0C",
+      "count": 1499
+    }
+  ],
+  "sample_main_dol_imports": [
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x8030002A",
+      "rtype": 6,
+      "target_vaddr": "0x8019D680",
+      "target_symbol": "Joy"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300032",
+      "rtype": 4,
+      "target_vaddr": "0x8019D680",
+      "target_symbol": "Joy"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300198",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x803001F0",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300268",
+      "rtype": 10,
+      "target_vaddr": "0x800E8A5C",
+      "target_symbol": "memset"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x8030027C",
+      "rtype": 10,
+      "target_vaddr": "0x80094AA0",
+      "target_symbol": "HDReadMemAlloc(char *, void **)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300380",
+      "rtype": 10,
+      "target_vaddr": "0x800E8A5C",
+      "target_symbol": "memset"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x803003CC",
+      "rtype": 10,
+      "target_vaddr": "0x800E8A5C",
+      "target_symbol": "memset"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x803003F4",
+      "rtype": 10,
+      "target_vaddr": "0x8007CFDC",
+      "target_symbol": "PushEm(cEm *)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300438",
+      "rtype": 10,
+      "target_vaddr": "0x800E8A5C",
+      "target_symbol": "memset"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300550",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300578",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x803005A0",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x803005DC",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300640",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300664",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x803006B0",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x803006D4",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x8030070C",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300730",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300780",
+      "rtype": 10,
+      "target_vaddr": "0x800E8B80",
+      "target_symbol": "strchr"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300790",
+      "rtype": 10,
+      "target_vaddr": "0x800E8B80",
+      "target_symbol": "strchr"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x803007B0",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300814",
+      "rtype": 10,
+      "target_vaddr": "0x800E8B80",
+      "target_symbol": "strchr"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300824",
+      "rtype": 10,
+      "target_vaddr": "0x800E8B80",
+      "target_symbol": "strchr"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300844",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300890",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x803008E0",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300908",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300958",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300990",
+      "rtype": 10,
+      "target_vaddr": "0x800E8B80",
+      "target_symbol": "strchr"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x8030099C",
+      "rtype": 10,
+      "target_vaddr": "0x800E8B80",
+      "target_symbol": "strchr"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x803009C4",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300A28",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300A60",
+      "rtype": 10,
+      "target_vaddr": "0x800E8B80",
+      "target_symbol": "strchr"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300A70",
+      "rtype": 10,
+      "target_vaddr": "0x800E8B80",
+      "target_symbol": "strchr"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300A90",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300B64",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300BA8",
+      "rtype": 10,
+      "target_vaddr": "0x800817E4",
+      "target_symbol": "eprintf(long, long, unsigned char, long, char *,...)"
+    },
+    {
+      "patch_sec": 1,
+      "patch_vaddr": "0x80300BC2",
+      "rtype": 6,
+      "target_vaddr": "0x8026E754",
+      "target_symbol": "pG"
+    }
+  ],
+  "notable_debug_strings": [
+    "MODEL LOAD -------",
+    "LOAD COMPLETE!",
+    "NOW LOADING...",
+    "FILE RELOAD",
+    "  SOUND TEST MODE MENU",
+    "  RIT   - STREAM PLAY",
+    "SOUND PROGRAM %s",
+    "STREAM(RIT)",
+    "CHORUS   ",
+    "DELAY    ",
+    "REVERB HI  ",
+    "REVERB STD.",
+    "CHORUS     ",
+    "DELAY      ",
+    "REVERB DPL2",
+    "PREDELAY    ( 0.000 -  0.100) : %2.4fF",
+    "BASEDELAY   (     5 -     15) : %8d",
+    "DELAY[0]    (    10 -   5000) : %8d",
+    "DELAY[1]    (    10 -   5000) : %8d",
+    "DELAY[2]    (    10 -   5000) : %8d",
+    "MASTER VOL BGM : %3d",
+    "MASTER VOL SE  : %3d",
+    "STREAM VOL BGM : %3d",
+    "STREAM VOL SE  : %3d"
+  ]
+}
