@@ -1,0 +1,37 @@
+name: Windows public source build
+
+on:
+  push:
+    branches: ['signpath/pn03-public-build-preflight']
+  pull_request:
+    paths:
+      - '.github/workflows/windows-public-build.yml'
+      - 'CMakeLists.txt'
+      - 'include/**'
+      - 'src/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 25
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Configure release build
+        shell: pwsh
+        run: |
+          git rev-parse HEAD
+          cmake --version
+          cmake -S . -B build -G 'Visual Studio 17 2022' -A x64 -DPN03_BUILD_ALL_RECOMP_UNITS=ON
+      - name: Compile port
+        shell: pwsh
+        run: cmake --build build --config Release --target PN03_WinPort --parallel 2
+      - name: Record executable hash
+        shell: pwsh
+        run: Get-FileHash -Algorithm SHA256 -LiteralPath build/Release/PN03_WinPort.exe
