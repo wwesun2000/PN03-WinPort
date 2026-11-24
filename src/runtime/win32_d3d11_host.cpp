@@ -796,7 +796,7 @@ void* Win32D3D11Host::get_or_create_texture_srv(
         return default_white_srv_;
     }
 
-    constexpr size_t kMaxD3D11CachedTextures = 1024u;
+    constexpr size_t kMaxD3D11CachedTextures = 2048u;
     if (tex_srv_cache_.size() >= kMaxD3D11CachedTextures) {
         auto oldest_it = tex_srv_cache_.begin();
         uint64_t oldest_tick = ~0ULL;
@@ -1318,11 +1318,6 @@ void Win32D3D11Host::ensure_frame_batches_rendered() {
 
 void Win32D3D11Host::flush_d3d11() {
     ensure_frame_batches_rendered();
-#ifdef _WIN32
-    if (d3d_context_) {
-        static_cast<ID3D11DeviceContext*>(d3d_context_)->Flush();
-    }
-#endif
 }
 
 void Win32D3D11Host::end_d3d11_frame_and_present() {

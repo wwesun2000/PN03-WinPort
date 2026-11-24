@@ -858,14 +858,79 @@ void LocalizationOverlay::emit_active_ui_scene_overlays(const Memory& mem) const
 }
 
 std::string LocalizationOverlay::resolve_localized_asset_path(const std::string& orig_path) const {
-    if (cfg_.language != GameLanguage::SimplifiedChinese) {
+    if (cfg_.language == GameLanguage::SimplifiedChinese) {
+        const std::string mod_rel = "assets/locales/zh_CN/iso_override/" + orig_path;
+        if (std::filesystem::exists(mod_rel)) {
+            return mod_rel;
+        }
         return orig_path;
     }
-    const std::string mod_rel = "assets/locales/zh_CN/iso_override/" + orig_path;
-    if (std::filesystem::exists(mod_rel)) {
-        return mod_rel;
+
+    std::string norm;
+    norm.reserve(orig_path.size());
+    for (char c : orig_path) {
+        norm.push_back(static_cast<char>(std::tolower(static_cast<unsigned char>(c == '\\' ? '/' : c))));
     }
-    return orig_path;
+    if (!norm.empty() && norm[0] == '/') {
+        norm.erase(0, 1);
+    }
+
+    if (cfg_.language == GameLanguage::Japanese) {
+        if (norm.rfind("id/eng/", 0) == 0) {
+            const std::string fname = norm.substr(7);
+            if (fname.size() > 6 && fname.compare(fname.size() - 6, 6, "_e.dat") == 0) {
+                const std::string cand = "id/" + fname.substr(0, fname.size() - 6) + ".dat";
+                if (const auto* iso = IsoStreamReader::active_instance()) {
+                    const IsoFileEntry* fe = iso->find_file(cand);
+                    if (!fe || fe->size_bytes <= 64u) {
+                        return orig_path;
+                    }
+                }
+                return cand;
+            }
+        }
+        return orig_path;
+    }
+
+    const char* eu_dir = nullptr;
+    char eu_suffix = '\0';
+    switch (cfg_.language) {
+        case GameLanguage::German:  eu_dir = "ger"; eu_suffix = 'g'; break;
+        case GameLanguage::French:  eu_dir = "fra"; eu_suffix = 'f'; break;
+        case GameLanguage::Spanish: eu_dir = "spa"; eu_suffix = 's'; break;
+        case GameLanguage::Italian: eu_dir = "ita"; eu_suffix = 'i'; break;
+        default: break;
+    }
+    if (!eu_dir) {
+        return orig_path;
+    }
+
+    std::string cand;
+    if (norm.rfind("id/eng/", 0) == 0) {
+        const std::string fname = norm.substr(7);
+        if (fname == "combo.tpl") {
+            cand = std::string("id/") + eu_dir + "/combo.tpl";
+        } else if (fname.size() > 6 && fname.compare(fname.size() - 6, 6, "_e.dat") == 0) {
+            cand = std::string("id/") + eu_dir + "/" + fname.substr(0, fname.size() - 6) + "_" + eu_suffix + ".dat";
+        }
+    } else if (norm == "etc/card.dat" || norm == "etc/continue.dat" || norm == "etc/result00.dat") {
+        cand = norm.substr(0, norm.size() - 4) + "_" + eu_suffix + ".dat";
+    } else if (norm == "etc/rank_a.tpl" || norm == "etc/rank_b.tpl" || norm == "etc/rank_c.tpl" ||
+               norm == "etc/rank_d.tpl" || norm == "etc/rank_e.tpl") {
+        cand = norm.substr(0, norm.size() - 4) + "_" + eu_suffix + ".tpl";
+    }
+
+    if (cand.empty()) {
+        return orig_path;
+    }
+    if (const auto* iso = IsoStreamReader::active_instance()) {
+        const IsoFileEntry* fe = iso->find_file(cand);
+        // Guard against missing files (e.g. id/fra/combo.tpl) or 32-byte dummy stubs
+        if (!fe || fe->size_bytes <= 64u) {
+            return orig_path;
+        }
+    }
+    return cand;
 }
 
 } // namespace pn03

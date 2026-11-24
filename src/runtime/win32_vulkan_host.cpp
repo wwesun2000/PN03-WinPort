@@ -33,7 +33,7 @@ constexpr uint32_t kMaxFramesInFlight        = 2u;
 constexpr size_t   kGxUboStride              = 256u; // Spec max minUniformBufferOffsetAlignment <= 256
 constexpr size_t   kMaxGxUboSlotsPerFrame    = 8192u;
 constexpr uint32_t kDescPoolChunkSets        = 4096u;
-constexpr size_t   kMaxCachedGcTextures      = 1024u;
+constexpr size_t   kMaxCachedGcTextures      = 2048u;
 constexpr size_t   kMaxCachedGcTextureBytes  = 256u * 1024u * 1024u;
 constexpr size_t   kMaxCachedTextTextures    = 256u;
 constexpr size_t   kMaxCachedDescSets        = 8192u;

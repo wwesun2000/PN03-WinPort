@@ -17,16 +17,16 @@ A **native Windows x64 C++20 static recompilation port** and **Dolphin SDK High-
 
 ### 2. Dual Graphics Backends (Vulkan 1.3 & Direct3D 11) + Visual Enhancements
 - **Native Vulkan 1.3 & Direct3D 11**: Choose between **Vulkan 1.3** (`src/runtime/win32_vulkan_host.cpp`) and **Direct3D 11** (`src/runtime/win32_d3d11_host.cpp`) at launch or in the GUI launcher.
-- **High-Resolution EFB Scaling**: Native 1080p, 1440p, 4K, or custom resolutions with configurable internal EFB scale factor (`internal_scale_factor`).
-- **Crisp Anti-Aliasing & Texture Filtering**: Supports **`2x / 4x / 8x MSAA`**, optional **FXAA** post-processing pass, and up to **16x Anisotropic Filtering**.
+- **Native `1x` to `6x` EFB Scaling**: Choose from **Native 480p / 720p / 1080p (`1x Native EFB`)** for integrated GPUs (Intel HD, Steam Deck / Proton) up to **2x–6x (4K)** internal scaling (`internal_scale_factor`).
+- **Crisp Anti-Aliasing & Texture Filtering**: Supports **`2x / 4x / 8x MSAA`**, optional **FXAA** post-processing pass, texture cache expansion (`2048` entries), and up to **16x Anisotropic Filtering**.
 - **Clean Picture Controls**: Bypasses GameCube `GXSetCopyFilter` 480i deflicker blur (`disable_copy_deflicker`), optionally removes cinema letterbox bars (`remove_cinesco_bars`), adjusts display brightness/gamma (`0.50`–`2.00`), and supports Windowed, Borderless Fullscreen, and Exclusive Fullscreen modes.
 
 ### 3. True 16:9 / 21:9 Widescreen + Unstretched 4:3 HUD
 - **True Expanded 3D Camera Frustum**: Select **Original (4:3)**, **Widescreen (16:9)**, or **Ultrawide (21:9)** (`aspect_ratio`). Horizontal 3D geometry and FOV expand natively without stretching Vanessa or enemies.
 - **Aspect-Locked 2D HUD & Portraits**: 2D menus, battle HUD bars, and communication screens remain cleanly proportioned and centered so UI elements never distort in widescreen.
 
-### 4. Multi-Language Support + Non-Destructive HD Simplified Chinese (`zh_CN`)
-- **Multiple Languages**: Supports Original **English**, **Japanese**, **German**, **French**, **Spanish**, **Italian**, plus an external non-destructive **Simplified Chinese (`zh_CN`)** overlay (`assets/locales/zh_CN.json`, 401 verified entries).
+### 4. Multi-Language Support (All 6 Disc Languages Unlocked) + HD Simplified Chinese (`zh_CN`)
+- **All Built-In Languages Unlocked on USA `GPNE08` ISO**: Select **English**, **Japanese (`日本語`)**, **German (`Deutsch`)**, **French (`Français`)**, **Spanish (`Español`)**, or **Italian (`Italiano`)** directly in the launcher using your **USA `GPNE08`** disc — `LocalizationOverlay::resolve_localized_asset_path` automatically unlocks the hidden `/id/spa`, `/id/fra`, `/id/ger`, `/id/ita`, `/id/` (Japanese), and `/etc/*_{s,f,g,i}` assets already bundled inside the USA ISO, alongside external non-destructive **Simplified Chinese (`zh_CN`)** (`assets/locales/zh_CN.json`, 401 verified entries).
 - **HD Chinese Overlay & Proper Dialogue Paging**:
   - Hooks `CMesWk::MesWorkTrans` and `CMesWk::FontDraw` to render crisp anti-aliased **Microsoft YaHei** HD UTF-8 text instead of low-res bitmap glyphs.
   - Properly segments multi-page (`0x0004`) communication scripts so only the currently active page renders at a time.
@@ -36,9 +36,10 @@ A **native Windows x64 C++20 static recompilation port** and **Dolphin SDK High-
 - **Dolphin-Style Frame Limiter**: High-precision QPC **59.94Hz / 29.97Hz** cadence control (`limit_fps_60`) and VI retrace synchronization prevent gameplay speed-ups on 120Hz/144Hz/240Hz monitors.
 - **Native XAudio2 + DSP/ADPCM Mixer**: Features 4-bit GameCube ADPCM decoding & interpolation, `AXPBADPCMLOOP` loop state handling, `SND_STR` ARAM ring-buffer wrapping, and 5ms subframe callback flushing (`flush_pending_hle_callbacks`) for stable BGM and SFX playback.
 
-### 6. Native Xbox XInput Controller, Keyboard Controls & Cyber Launcher
-- **Cyberpunk Pre-Launch GUI**: Configure resolution, backend (Vulkan 1.3 / D3D11), aspect ratio, MSAA/FXAA, language, audio volume, and controls visually before booting, saved cleanly to `config/pn03_settings.json`.
-- **Xbox XInput + Custom Remapping**: Supports Type A/B/C/D presets, custom per-button mapping, Guide `[X]` nexus binding, analog deadzones, trigger thresholds, and dual-motor vibration.
+### 6. Universal Controller Stack (SDL2 / XInput / DirectInput8 / WinMM), Cheat Toggles & Cyber Launcher
+- **Cyberpunk Pre-Launch GUI & Reliable Persistence**: Configure resolution, backend (Vulkan 1.3 / D3D11), aspect ratio, MSAA/FXAA, language, cheat toggles, audio volume, and controls visually before booting. Automatically resolves `config/pn03_settings.json` relative to the executable and persists changes immediately on edit, close, or launch (even when launching `PN03_WinPort.exe` directly or via Proton/Wine).
+- **Universal Controller Support (Windows & Linux/Proton)**: Automatically cascades across optional **`SDL2.dll`** (drop beside `.exe` if desired), **XInput** (`1.4` / `1.3` / `9.1.0`, scanning slots `0..3` with Guide `[X]` support), **DirectInput 8** (built-in DualShock 4 / DualSense Sony HID + generic HID mapping), and **WinMM** (`joyGetPosEx`), plus Type A/B/C/D presets, custom per-button mapping, analog deadzones, trigger thresholds, and dual-motor rumble.
+- **Built-In Opt-In Cheat Toggles (Off by Default)**: Optional launcher switches for **Inf Shield HP**, **Inf Energy / Unlimited Energy Drive**, **9.99M Shop Credits**, and **All 11 Suits + Max Upgrades**.
 - **Virtual Memory Card & Rotating Logs**: Automatically saves/loads GameCube Memory Card data under `saves/` and records bounded rotating runtime logs under `logs/`.
 
 ---
@@ -119,7 +120,7 @@ Other flags: `--frames N`, `--auto-start`, `--dump-frame <path.bmp>`, `--no-vsyn
 :: 1. Build Release binaries -> build\Release\PN03_WinPort.exe & pn03_cpp_tests.exe
 scripts\build_windows_port.bat
 
-:: 2. Run all 27 C++20 runtime & static recompilation unit tests
+:: 2. Run all 28 C++20 runtime & static recompilation unit tests
 build\Release\pn03_cpp_tests.exe "D:\Games\P.N. 03 (USA).iso"
 
 :: 3. Verify Simplified Chinese localization dictionary (401 entries)
@@ -149,7 +150,7 @@ python tests\test_pn03_suite.py -v
 ├── re_data/                     # Symbol, FST, vtable, REL & BNR JSON metadata manifests
 ├── tools/                       # Static lifting scripts, shader generator & localization validator
 ├── scripts/                     # Build & Ghidra headless helper scripts
-└── tests/                       # C++20 (27 tests) & Python E2E (8 tests) verification suites
+└── tests/                       # C++20 (28 tests) & Python E2E (8 tests) verification suites
 ```
 
 ---
@@ -169,6 +170,8 @@ python tests\test_pn03_suite.py -v
 ## Troubleshooting & FAQ
 
 - **"No ISO or extracted sys/ path configured"**: Place your `P.N.03` (`GPNE08`) `.iso` / `.gcm` / `.nkit.iso` in the repository root (or inside `release/`), or click **Browse** in the Cyber Launcher.
+- **"Unsupported Game ID: GPNP08" / Playing in Spanish / Euro Languages / Japanese**: Because all 6,353 statically recompiled functions bind to the USA `GPNE08` `main.dol` memory map, European PAL (`GPNP08`) discs are not directly compatible. However, your **USA `GPNE08` ISO already contains full Spanish, French, German, Italian, English, and Japanese assets** — simply pick your preferred language in the Cyber Launcher (`Español (/id/spa)`, etc.) with a `GPNE08` ISO!
+- **Playing on Integrated GPUs / Linux Proton**: Select **`1280x720 HD (1x Native EFB - iGPU)`** or **`640x480 480p (1x Native EFB - Fastest)`** with AA `Off` or `FXAA` for smoother outdoor framerates. DualShock 4 and generic controllers are supported automatically via DirectInput8/WinMM or by placing an optional Windows x64 `SDL2.dll` next to `PN03_WinPort.exe`.
 - **Vulkan launch fails on older GPU drivers**: Switch the Graphics Backend in the Cyber Launcher to **Direct3D 11**, or run `release\PN03_WinPort.exe --backend d3d11`.
 - **Save files location**: Virtual GameCube Memory Card saves are stored automatically inside `saves/` (`pn03_card_a.sav` etc.).
 - **Runtime diagnostics**: Logs rotate automatically inside `logs/` (`pn03_runtime.log`) with bounded disk usage.

@@ -13,7 +13,11 @@ namespace pn03 {
 // ============================================================================
 class CyberLauncherUI {
 public:
-    explicit CyberLauncherUI(RuntimeConfig& cfg) : cfg_(cfg) {}
+    explicit CyberLauncherUI(RuntimeConfig& cfg, std::string config_path = "config/pn03_settings.json")
+        : cfg_(cfg), config_path_(std::move(config_path)) {}
+
+    void set_config_path(const std::string& path) { config_path_ = path; }
+    const std::string& config_path() const { return config_path_; }
 
     // Opens the native Win32 3-Card Sci-Fi Launcher Window on Windows (_WIN32)
     // Returns true if user clicked "LAUNCH P.N.03 ENGINE", false if closed/cancelled.
@@ -27,6 +31,7 @@ public:
 
 private:
     RuntimeConfig& cfg_;
+    std::string config_path_;
 };
 
 } // namespace pn03

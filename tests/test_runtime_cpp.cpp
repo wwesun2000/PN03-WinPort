@@ -1928,6 +1928,131 @@ void test_audio_ax_ring_wrap_and_subframe_hle_flush() {
     std::cout << "[PASS] test_audio_ax_ring_wrap_and_subframe_hle_flush (SND_STR loop wrap + 5ms HLE flush verified)\n";
 }
 
+static void test_multi6_localization_config_save_cheats_and_1x_controller(const std::string& iso_path) {
+    namespace fs = std::filesystem;
+
+    // 1. Config persistence (auto-mkdir + Proton Z:/ path + 1x scale + cheat flags)
+    const fs::path tmp_dir = fs::temp_directory_path() / "pn03_test_cfg_persistence_28";
+    std::error_code ec;
+    fs::remove_all(tmp_dir, ec);
+    const fs::path nested_cfg = tmp_dir / "nested" / "pn03_settings.json";
+
+    RuntimeConfig cfg;
+    cfg.iso_path               = "Z:\\home\\user\\P.N. 03 (USA).iso";
+    cfg.render_width           = 1280;
+    cfg.render_height          = 720;
+    cfg.internal_scale_factor  = 1;
+    cfg.language               = GameLanguage::Spanish;
+    cfg.cheat_god_mode         = true;
+    cfg.cheat_infinite_energy  = true;
+    cfg.cheat_infinite_credits = true;
+    cfg.cheat_unlock_all_suits = true;
+
+    assert(cfg.save_to_json(nested_cfg.string()));
+    assert(fs::exists(nested_cfg));
+    RuntimeConfig loaded = RuntimeConfig::load_from_json(nested_cfg.string());
+    assert(loaded.iso_path == "Z:/home/user/P.N. 03 (USA).iso");
+    assert(loaded.internal_scale_factor == 1u);
+    assert(loaded.render_width == 1280u && loaded.render_height == 720u);
+    assert(loaded.language == GameLanguage::Spanish);
+    assert(loaded.cheat_god_mode && loaded.cheat_infinite_energy &&
+           loaded.cheat_infinite_credits && loaded.cheat_unlock_all_suits);
+    assert(!RuntimeConfig::resolve_config_path().empty());
+    fs::remove_all(tmp_dir, ec);
+
+    // 2. All 6 disc languages unlocked (Japanese + English + German + French + Spanish + Italian)
+    const IsoStreamReader* prev_iso = IsoStreamReader::active_instance();
+    IsoStreamReader test_iso;
+    std::string iso_err;
+    if (!iso_path.empty() && test_iso.open(iso_path, iso_err)) {
+        IsoStreamReader::set_active_instance(&test_iso);
+    }
+
+    auto check_loc = [](GameLanguage lang, const std::string& in_path) {
+        RuntimeConfig c;
+        c.language = lang;
+        LocalizationOverlay loc(c);
+        return loc.resolve_localized_asset_path(in_path);
+    };
+
+    assert(check_loc(GameLanguage::Spanish,  "id/eng/iddata_e.dat")   == "id/spa/iddata_s.dat");
+    assert(check_loc(GameLanguage::Spanish,  "id/eng/lobby_e.dat")    == "id/spa/lobby_s.dat");
+    assert(check_loc(GameLanguage::Spanish,  "id/eng/combo.tpl")      == "id/spa/combo.tpl");
+    assert(check_loc(GameLanguage::Spanish,  "etc/card.dat")          == "etc/card_s.dat");
+    assert(check_loc(GameLanguage::Spanish,  "etc/continue.dat")      == "etc/continue_s.dat");
+    assert(check_loc(GameLanguage::Spanish,  "etc/result00.dat")      == "etc/result00_s.dat");
+    assert(check_loc(GameLanguage::Spanish,  "etc/rank_a.tpl")        == "etc/rank_a_s.tpl");
+    assert(check_loc(GameLanguage::Spanish,  "/etc/title.dat")        == "/etc/title.dat");
+    assert(check_loc(GameLanguage::German,   "id/eng/iddata_e.dat")   == "id/ger/iddata_g.dat");
+    assert(check_loc(GameLanguage::German,   "id/eng/combo.tpl")      == "id/ger/combo.tpl");
+    assert(check_loc(GameLanguage::Italian,  "id/eng/iddata_e.dat")   == "id/ita/iddata_i.dat");
+    assert(check_loc(GameLanguage::French,   "id/eng/iddata_e.dat")   == "id/fra/iddata_f.dat");
+    if (IsoStreamReader::active_instance() != nullptr) {
+        // id/fra/combo.tpl is absent on disc, so ISO check must keep id/eng/combo.tpl cleanly
+        assert(check_loc(GameLanguage::French, "id/eng/combo.tpl") == "id/eng/combo.tpl");
+    }
+    assert(check_loc(GameLanguage::Japanese, "id/eng/iddata_e.dat")   == "id/iddata.dat");
+    assert(check_loc(GameLanguage::Japanese, "id/eng/lobby_e.dat")    == "id/lobby.dat");
+    assert(check_loc(GameLanguage::Japanese, "id/eng/equip_ck_e.dat") == "id/equip_ck.dat");
+    assert(check_loc(GameLanguage::Japanese, "id/eng/combo.tpl")      == "id/eng/combo.tpl");
+    IsoStreamReader::set_active_instance(prev_iso);
+
+    // 3. Built-in cheat toggles verification against Global struct (0x801959C0)
+    Memory mem;
+    mem.write_u32(recomp::sym_addr::kSda_pG, recomp::sym_addr::kGlobalStruct);
+    const uint32_t pG = recomp::sym_addr::kGlobalStruct;
+    mem.write_u16(pG + 26640u, 80u);   // Cur HP
+    mem.write_u16(pG + 26642u, 500u);  // Max HP
+    mem.write_u16(pG + 26644u, 120u);  // Cur Energy
+    mem.write_u16(pG + 26646u, 800u);  // Max Energy
+    mem.write_u32(pG + 26664u, 250u);  // Points
+    mem.write_u32(pG + 304u, 0u);
+    mem.write_u32(pG + 4u, 0u);
+    mem.write_u8(pG + 26776u + 2u, 1u); // Mark suit[0] initialized
+
+    RuntimeConfig cheat_cfg;
+    cheat_cfg.cheat_god_mode         = true;
+    cheat_cfg.cheat_infinite_energy  = true;
+    cheat_cfg.cheat_infinite_credits = true;
+    cheat_cfg.cheat_unlock_all_suits = true;
+    apply_runtime_cheats(cheat_cfg, mem);
+
+    assert(mem.read_s16(pG + 26640u) == 500);
+    assert(mem.read_s16(pG + 26644u) == 800);
+    assert((mem.read_u32(pG + 304u) & 0x2000u) != 0u);
+    assert(mem.read_u32(pG + 26664u) == 9999999u);
+    assert((mem.read_u32(pG + 4u) & 0x60000000u) == 0x60000000u);
+    for (uint32_t s = 0; s < 11u; ++s) {
+        const uint32_t s_va = pG + 26776u + s * 16u;
+        assert(mem.read_u8(s_va + 0u) == 1u);
+        assert(mem.read_u8(s_va + 4u) == 5u);
+        assert(mem.read_u8(s_va + 5u) == 2u);
+        assert(mem.read_u8(s_va + 6u) == 6u);
+    }
+
+    // 4. Native 1x EFB dimensions + default disconnected XboxInputState / keyboard online fallback
+    uint32_t efb_w = 0, efb_h = 0;
+    RuntimeConfig efb_43;
+    efb_43.internal_scale_factor = 1u;
+    efb_43.aspect_ratio = AspectRatioMode::Original_4_3;
+    compute_efb_dimensions(efb_43, 480u, efb_w, efb_h);
+    assert(efb_w == 640u && efb_h == 480u);
+
+    RuntimeConfig efb_169;
+    efb_169.internal_scale_factor = 1u;
+    efb_169.aspect_ratio = AspectRatioMode::Widescreen_16_9;
+    compute_efb_dimensions(efb_169, 1080u, efb_w, efb_h);
+    assert(efb_h == 480u && efb_w >= 848u && efb_w <= 864u);
+
+    PadXInputBridge pad(cheat_cfg);
+    XboxInputState disconnected{};
+    assert(!disconnected.connected);
+    GcPadStatus raw_gc = pad.translate_to_gc_pad(disconnected);
+    assert(raw_gc.err == -1);
+
+    std::cout << "[PASS] test_multi6_localization_config_save_cheats_and_1x_controller (Config save, Multi-6/JPN ISO assets, 4 cheats, 1x EFB, PAD state verified)\n";
+}
+
 int main(int argc, char** argv) {
 #ifdef _WIN32
     SetConsoleOutputCP(CP_UTF8);
@@ -1962,8 +2087,9 @@ int main(int argc, char** argv) {
     test_cmeswk_multipage_0x0004_segmentation();
     test_comm_box_font_scale_wrap_and_bounds();
     test_audio_ax_ring_wrap_and_subframe_hle_flush();
+    test_multi6_localization_config_save_cheats_and_1x_controller(extract_dir);
     std::cout << "================================================================\n";
-    std::cout << " ALL C++20 RUNTIME & STATIC RECOMPILATION TESTS PASSED (27/27)!\n";
+    std::cout << " ALL C++20 RUNTIME & STATIC RECOMPILATION TESTS PASSED (28/28)!\n";
     std::cout << "================================================================\n";
     return 0;
 }

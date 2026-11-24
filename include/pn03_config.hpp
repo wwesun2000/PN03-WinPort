@@ -127,6 +127,12 @@ struct RuntimeConfig {
     bool             load_tools_rel_debug   = false; // Load module/Tools.rel (Sound Test & File Reload)
     bool             skip_launcher_gui      = false;
 
+    // Optional Built-In Enhancement / Cheat Toggles (Off by default)
+    bool             cheat_god_mode         = false; // Maintain Player HP at Max HP (Global + 0x6810)
+    bool             cheat_infinite_energy  = false; // Unlimited Suit Energy & Energy Drives (Global + 0x130 bit 0x2000 & 0x6814)
+    bool             cheat_infinite_credits = false; // Max 9,999,999 Pts / Shop Credits (Global + 0x6828)
+    bool             cheat_unlock_all_suits = false; // Unlock All 11 Aegis Suits & Max Upgrade Limits (Global + 0x4 & 0x6898)
+
     // Rotating Debug Log Settings
     std::string      log_dir                = "logs";
     std::string      log_level              = "info"; // trace, debug, info, warn, error, off
@@ -140,6 +146,7 @@ struct RuntimeConfig {
 
     bool save_to_json(const std::string& path) const;
     static RuntimeConfig load_from_json(const std::string& path);
+    static std::string resolve_config_path(const std::string& explicit_or_default_path = "config/pn03_settings.json");
 };
 
 } // namespace pn03

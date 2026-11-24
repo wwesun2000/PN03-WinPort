@@ -103,7 +103,7 @@ struct GcPadStatus {
 };
 
 struct XboxInputState {
-    bool     connected      = true;
+    bool     connected      = false;
     bool     btn_a          = false;
     bool     btn_b          = false;
     bool     btn_x          = false;
@@ -131,8 +131,10 @@ class PadXInputBridge {
 public:
     explicit PadXInputBridge(const RuntimeConfig& cfg) : cfg_(cfg) {}
 
-    // Polls Windows XInput hardware (when compiled on Windows) or uses injected state
+    // Polls hardware controllers (SDL2 -> XInput -> DirectInput8 -> WinMM) or uses injected state
     XboxInputState poll_xbox_controller() const;
+    static XboxInputState poll_any_controller(const RuntimeConfig& cfg, std::string* out_backend = nullptr);
+    static void set_any_controller_rumble(const RuntimeConfig& cfg, float strength);
     GcPadStatus translate_to_gc_pad(const XboxInputState& xstate) const;
 
     // Writes translated PADStatus[4] directly into GameCube RAM (0x801C4A68 Pad_data)
@@ -346,5 +348,8 @@ private:
     uint64_t frame_ticks_         = 0;
     uint64_t next_deadline_ticks_ = 0;
 };
+
+// Applies user-enabled runtime enhancement/cheat toggles safely to initialized GameCube RAM.
+void apply_runtime_cheats(const RuntimeConfig& cfg, Memory& mem);
 
 } // namespace pn03

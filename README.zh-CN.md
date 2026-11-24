@@ -17,16 +17,16 @@
 
 ### 2. 双现代 3D 图形后端（Vulkan 1.3 + Direct3D 11）与全套画质增强
 - **双后端无缝切换**：支持原生 **Vulkan 1.3**（`src/runtime/win32_vulkan_host.cpp`）与 **Direct3D 11**（`src/runtime/win32_d3d11_host.cpp`），可在启动器界面或命令行自由切换。
-- **真高清与超采样缩放**：原生支持 `1920x1080`、2K、4K 等高分辨率输出，支持可调内部 EFB 倍率（`internal_scale_factor`）。
-- **硬件抗锯齿与纹理增强**：支持 **`2x / 4x / 8x MSAA`** 多重采样抗锯齿 + 可选 **FXAA** 后处理抗锯齿 + 最高 **16x 各向异性过滤**。
+- **原生 1x ~ 6x 超采样缩放**：提供 **480p / 720p / 1080p（`1x Native EFB` 原生内部分辨率）** 预设以兼顾核显（Intel HD / Steam Deck / Proton），并支持 **2x ~ 6x (4K)** 高清内部分辨率缩放（`internal_scale_factor`）。
+- **硬件抗锯齿与纹理增强**：支持 **`2x / 4x / 8x MSAA`** 多重采样抗锯齿 + 可选 **FXAA** 后处理抗锯齿 + 2048 槽位纹理缓存 + 最高 **16x 各向异性过滤**。
 - **清透画面调校**：可关闭原版 480i 隔行去闪烁模糊滤波（`disable_copy_deflicker`）、移除电影上下黑边（`remove_cinesco_bars`）、自定义亮度伽马增益（`brightness`: `0.50`–`2.00`），并支持窗口化、无边框全屏与独占全屏。
 
 ### 3. 真 16:9 / 21:9 宽屏视场 + 不拉伸 HUD
 - **水平真宽屏视场扩展**：支持 **原始 4:3**、**真宽屏 16:9** 与 **超宽屏 21:9**（`aspect_ratio`），直接扩展 3D 透视视锥与相机横向视野，人物、场景与特效**绝不横向拉扁**。
 - **UI/HUD 比例锁定与居中**：游戏内血条、菜单、暂停界面与通讯立绘保持原版比例居中显示，兼顾宽屏沉浸感与界面清晰度。
 
-### 4. 多语言支持 + 外置无损高清简体中文汉化（`zh_CN`）
-- **多语言切换**：支持原版 **英语**、**日语**、**德语**、**法语**、**西班牙语**、**意大利语**，以及外置无损 **简体中文（`zh_CN`）** 覆盖层（[assets/locales/zh_CN.json](assets/locales/zh_CN.json)，涵盖菜单、战衣、能量驱动及通讯剧情共 401 条校验词条）。
+### 4. 解锁美版光盘全 6 国语言 + 外置无损高清简体中文汉化（`zh_CN`）
+- **美版 `GPNE08` 光盘全语言解锁**：无需欧版/日版光盘，即可直接在启动器中切换使用美版 `GPNE08` 镜像内部隐藏的完整 **英语**、**日语（`日本語`）**、**德语（`Deutsch`）**、**法语（`Français`）**、**西班牙语（`Español`）**、**意大利语（`Italiano`）** 资源（`resolve_localized_asset_path` 自动映射到 `/id/{spa,fra,ger,ita}/`、`/id/` 与 `/etc/*_{s,f,g,i}`），同时完整支持外置无损 **简体中文（`zh_CN`）** 覆层（[assets/locales/zh_CN.json](assets/locales/zh_CN.json)，401 条校验词条）。
 - **高清中文字库与通讯框精修排版**：
   - 通过钩子接管 `CMesWk::MesWorkTrans` 与 `CMesWk::FontDraw`，使用 **Microsoft YaHei（微软雅黑）** 抗锯齿高清矢量位图渲染中文，告别原版点阵模糊字体。
   - **多页剧情严格分页**：精准识别脚本中的 `0x0004` 翻页标记，逐页显示当前对话，不会一次性把后续页面全部堆叠到屏幕上。
@@ -36,9 +36,10 @@
 - **高刷新率防加速锁帧**：采用 Dolphin 风格高精度 QPC **59.94Hz / 29.97Hz** 锁帧器（`limit_fps_60`）并同步限制 VI 等待计数（`pG+284`），确保在 120Hz/144Hz/240Hz 显示器上游戏动作与节奏维持原汁原味。
 - **稳定 BGM/音效流式混音**：基于 Windows **XAudio2** 实现 4-bit GameCube ADPCM 硬件级插值解码、`AXPBADPCMLOOP` 循环状态衔接、`SND_STR` ARAM 环形缓冲即时回绕及每 5ms DSP 子帧回调冲刷（`flush_pending_hle_callbacks`），解决游戏中途长时流式 BGM 停播与音频卡顿问题。
 
-### 6. 原生 Xbox 手柄 / 键鼠操控 & 赛博风格可视化启动器
-- **赛博风格启动器（Cyber Launcher）**：开机前可视化调节后端（Vulkan / D3D11）、分辨率、宽屏比例、MSAA/FXAA、语言、音量与按键预设，并自动保存至 `config/pn03_settings.json`。
-- **手柄即插即用**：支持 XInput Xbox 手柄（含 Type A/B/C/D 预设、全按键自定义映射、Xbox `[X]` Guide 键映射、死区/扳机阈值调节与双马达震动），同时提供完整 PC 键鼠映射。
+### 6. 全兼容手柄栈（SDL2 / XInput / DirectInput8 / WinMM）、作弊开关与赛博启动器
+- **赛博风格启动器与配置稳定持久化**：自动按可执行文件相对路径定位并在编辑/关闭窗口/点击启动时自动创建目录并保存 `config/pn03_settings.json`（兼容直接双击 EXE 与 Linux Proton 路径）。
+- **多后端手柄即插即用（兼容 DualShock 4 与 Linux/Proton）**：自动级联支持可选动态加载的 **`SDL2.dll`**（放入同目录即可启用）、**XInput**（`1.4`/`1.3`/`9.1.0` 多槽位扫描 + Guide 键）、**DirectInput 8**（内置 Sony DS4/DualSense 与通用 HID 映射）及 **WinMM**（`joyGetPosEx`），支持 Type A/B/C/D 预设、逐键映射、死区/扳机阈值及双马达震动。
+- **内置可选作弊开关（默认全关）**：启动器卡片内可一键开启 **无限护盾生命 (`INF SHIELD HP`)**、**无限能量/无限能量驱动 (`INF ENERGY / ED`)**、**999 万积分点数 (`9.99M CREDITS`)** 及 **全 11 套战衣与满级强化解锁 (`ALL SUITS MAX`)**。
 - **自动记忆卡存档与滚动日志**：自动维护虚拟记忆卡存档（`saves/`）及体积可控的轮转运行日志（`logs/`）。
 
 ---
@@ -119,7 +120,7 @@ release\PN03_WinPort.exe --self-test --iso "D:\Games\P.N. 03 (USA).iso"
 :: 1. 编译 Release 版本 -> 输出到 build\Release\PN03_WinPort.exe 与 pn03_cpp_tests.exe
 scripts\build_windows_port.bat
 
-:: 2. 运行全部 27 项 C++20 运行时与重编译单元测试
+:: 2. 运行全部 28 项 C++20 运行时与重编译单元测试
 build\Release\pn03_cpp_tests.exe "D:\Games\P.N. 03 (USA).iso"
 
 :: 3. 校验简体中文汉化词典完整性（401 条翻译）
@@ -149,7 +150,7 @@ python tests\test_pn03_suite.py -v
 ├── re_data/                     # 符号表、FST 文件清单、虚表与 BNR JSON 元数据
 ├── tools/                       # 静态转译工具、Vulkan Shader 生成器与汉化词典校验脚本
 ├── scripts/                     # 编译脚本与 Ghidra 辅助脚本
-└── tests/                       # C++20（27 项）与 Python（8 项）完整自动化测试套件
+└── tests/                       # C++20（28 项）与 Python（8 项）完整自动化测试套件
 ```
 
 ---
@@ -169,6 +170,8 @@ python tests\test_pn03_suite.py -v
 ## 常见问题（FAQ）
 
 - **提示未找到 ISO 路径**：将你的 *P.N.03*（`GPNE08`）`.iso` / `.gcm` / `.nkit.iso` 文件放到仓库根目录（或 `release/` 目录），也可以直接在启动器窗口点击浏览选择。
+- **提示 `Unsupported Game ID: GPNP08` / 如何切换西班牙语或其他语种**：由于 6,353 个静态重编译函数固定绑定美版 `GPNE08` `main.dol` 内存布局，暂不支持直接引导欧版 PAL (`GPNP08`) 镜像；但**美版 `GPNE08` 原盘内部已自带完整的西班牙语、法语、德语、意大利语、英语及日语资源**，直接使用美版 ISO 并在启动器下拉框选择对应语言即可体验！
+- **核显 / Linux Proton 性能优化与手柄识别**：如室外多敌人场景较卡顿，可在启动器选择 **`1280x720 HD (1x Native EFB - iGPU)`** 或 **`640x480 480p (1x Native EFB - Fastest)`** 并关闭 AA 或只开 FXAA；DualShock 4 / 通用手柄会自动通过 DirectInput8 / WinMM 识别，也可自行将 Windows x64 版 `SDL2.dll` 放到 `PN03_WinPort.exe` 同目录启用原生 SDL2 GameController 驱动。
 - **旧显卡驱动下 Vulkan 启动失败**：在启动器将图形后端切换为 **Direct3D 11**，或命令行加上 `--backend d3d11`。
 - **存档保存在哪里**：游戏记忆卡存档自动以虚拟文件形式保存在 `saves/` 目录（如 `pn03_card_a.sav`）。
 - **如何排查运行问题**：运行日志自动滚动保存在 `logs/` 目录中，并限制最大文件数与总磁盘占用。

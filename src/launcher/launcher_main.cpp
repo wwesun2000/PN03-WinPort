@@ -102,7 +102,8 @@ public:
             return false;
         }
         if (iso_reader_.game_id() != "GPNE08") {
-            err_msg = "Unsupported Game ID: " + iso_reader_.game_id() + " (expected GPNE08 - P.N.03).";
+            err_msg = "Unsupported Game ID: " + iso_reader_.game_id() +
+                      " (expected GPNE08 - P.N.03 USA). Static recompilation binds 6,340+ functions & RAM layout to GPNE08 main.dol; note that GPNE08 USA already contains full Japanese/English/German/French/Spanish/Italian assets (select in Launcher).";
             return false;
         }
 
@@ -215,6 +216,7 @@ public:
             loc_overlay_.begin_frame();
             gx_renderer_.begin_frame(mem_);
             XboxInputState synth{};
+            synth.connected = true;
             const XboxInputState* frame_input = test_input;
             if (!frame_input && auto_start) {
                 if ((f >= 20u && f <= 25u) || (f >= 60u && f <= 65u) ||
@@ -281,6 +283,7 @@ public:
                     uint32_t sys_flags = mem_.read_u32(pG_s + 292u);
                     mem_.write_u32(pG_s + 292u, sys_flags & ~0x38080019u);
                 }
+                apply_runtime_cheats(cfg_, mem_);
 
                 if (t_frame) std::cerr << "[TRACE f=" << f << "] Scheduler" << std::endl;
                 dispatch_recompiled_function(0x800A18E4u, ctx_, mem_); // Scheduler
@@ -298,6 +301,7 @@ public:
                 dispatch_recompiled_function(0x800CBFB8u, ctx_, mem_); // SndWatcher
                 if (t_frame) std::cerr << "[TRACE f=" << f << "] EprintfFlush" << std::endl;
                 dispatch_recompiled_function(0x80081BE0u, ctx_, mem_); // EprintfFlush
+                apply_runtime_cheats(cfg_, mem_);
             }
 
             uint32_t pG_addr = mem_.read_u32(recomp::sym_addr::kSda_pG);
@@ -522,6 +526,7 @@ int main(int argc, char** argv) {
         }
     }
 
+    config_path = pn03::RuntimeConfig::resolve_config_path(config_path);
     pn03::RuntimeConfig cfg = pn03::RuntimeConfig::load_from_json(config_path);
     if (!backend_override.empty()) {
         std::string b_low = backend_override;
@@ -566,7 +571,7 @@ int main(int argc, char** argv) {
     }
 
     if (!dump_launcher_path.empty()) {
-        pn03::CyberLauncherUI launcher(cfg);
+        pn03::CyberLauncherUI launcher(cfg, config_path);
         const std::string summary = cfg.iso_path.empty()
             ? "AUTO-SCAN PENDING | 0 BUILT-IN ASSETS"
             : "MOUNTED - 700 FILES | 0 BUILT-IN ASSETS";
@@ -591,7 +596,7 @@ int main(int argc, char** argv) {
 
     if (cfg.runtime_mode == "live" && !cfg.skip_launcher_gui && !no_gui) {
         PN03_LOG(pn03::LogLevel::Info, "LAUNCHER", "Opening interactive Cyber Launcher window");
-        pn03::CyberLauncherUI launcher(cfg);
+        pn03::CyberLauncherUI launcher(cfg, config_path);
         if (!launcher.run_modal_launcher_window()) {
             PN03_LOG(pn03::LogLevel::Info, "LAUNCHER", "Launcher closed by user without launching engine");
             pn03::global_logger().shutdown();
@@ -601,17 +606,35 @@ int main(int argc, char** argv) {
                   cfg.iso_path.c_str(), cfg.render_width, cfg.render_height, static_cast<int>(cfg.window_mode));
     }
 
+    auto language_name = [](pn03::GameLanguage lang) -> const char* {
+        switch (lang) {
+            case pn03::GameLanguage::Japanese:          return "Japanese (ja_JP /id)";
+            case pn03::GameLanguage::German:            return "Deutsch (/id/ger)";
+            case pn03::GameLanguage::French:            return "Francais (/id/fra)";
+            case pn03::GameLanguage::Spanish:           return "Espanol (/id/spa)";
+            case pn03::GameLanguage::Italian:           return "Italiano (/id/ita)";
+            case pn03::GameLanguage::SimplifiedChinese: return "Simplified Chinese (zh_CN)";
+            case pn03::GameLanguage::English:
+            default:                                    return "English (US Default)";
+        }
+    };
+
     std::cout << "================================================================\n";
-    std::cout << " P.N.03 (GPNE08) Windows Native Recompiled Port & Launcher v2.3\n";
+    std::cout << " P.N.03 (GPNE08) Windows Native Recompiled Port & Launcher v2.4\n";
     std::cout << "================================================================\n";
+    std::cout << "  * Config File       : " << config_path << "\n";
     std::cout << "  * Runtime Mode      : " << cfg.runtime_mode << (self_test ? " (self-test)" : "") << "\n";
     std::cout << "  * Graphics Backend  : " << (cfg.backend == pn03::GraphicsBackend::Vulkan13 ? "Vulkan 1.3" : "Direct3D 11") << "\n";
     std::cout << "  * Target Resolution : " << cfg.render_width << "x" << cfg.render_height
               << " (" << cfg.internal_scale_factor << "x EFB Scale)\n";
     std::cout << "  * Anti-Aliasing     : " << static_cast<int>(cfg.msaa_mode) << "x MSAA"
               << (cfg.enable_fxaa ? " + FXAA" : "") << " | " << cfg.anisotropic_filtering << "x AF\n";
-    std::cout << "  * Language Overlay  : " << (cfg.language == pn03::GameLanguage::SimplifiedChinese ? "Simplified Chinese (zh_CN)" : "Original") << "\n";
-    std::cout << "  * Xbox XInput Pad   : " << (cfg.enable_xinput ? "Enabled (Controller 0 + Rumble)" : "Disabled") << "\n";
+    std::cout << "  * Language Overlay  : " << language_name(cfg.language) << "\n";
+    std::cout << "  * Controller Stack  : " << (cfg.enable_xinput ? "Enabled (SDL2 / XInput / DirectInput8 / WinMM + Rumble)" : "Disabled") << "\n";
+    std::cout << "  * Cheat Toggles     : God=" << (cfg.cheat_god_mode ? "ON" : "OFF")
+              << " InfEnergy=" << (cfg.cheat_infinite_energy ? "ON" : "OFF")
+              << " InfPts=" << (cfg.cheat_infinite_credits ? "ON" : "OFF")
+              << " AllSuits=" << (cfg.cheat_unlock_all_suits ? "ON" : "OFF") << "\n";
     std::cout << "  * Mounted ISO Path  : " << (cfg.iso_path.empty() ? "<not set>" : cfg.iso_path) << "\n";
 
     if (cfg.iso_path.empty()) {

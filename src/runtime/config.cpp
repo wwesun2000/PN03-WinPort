@@ -1,7 +1,9 @@
 #include "pn03_config.hpp"
 #include "pn03_runtime.hpp"
+#include "pn03_symbols.hpp"
 #include <algorithm>
 #include <cmath>
+#include <filesystem>
 #include <fstream>
 #include <sstream>
 #include <regex>
@@ -62,8 +64,57 @@ static bool extract_json_bool(const std::string& content, const std::string& key
     return def_val;
 }
 
+std::string RuntimeConfig::resolve_config_path(const std::string& explicit_or_default_path) {
+    namespace fs = std::filesystem;
+    std::error_code ec;
+    if (!explicit_or_default_path.empty() && explicit_or_default_path != "config/pn03_settings.json" &&
+        explicit_or_default_path != "config\\pn03_settings.json") {
+        return explicit_or_default_path;
+    }
+
+    std::vector<fs::path> existing_candidates;
+    existing_candidates.push_back(fs::current_path(ec) / "config" / "pn03_settings.json");
+
+    fs::path exe_dir;
+#ifdef _WIN32
+    wchar_t exe_buf[MAX_PATH] = {0};
+    if (GetModuleFileNameW(nullptr, exe_buf, MAX_PATH) > 0) {
+        exe_dir = fs::path(exe_buf).parent_path();
+        existing_candidates.push_back(exe_dir / "config" / "pn03_settings.json");
+        if (exe_dir.has_parent_path()) {
+            existing_candidates.push_back(exe_dir.parent_path() / "config" / "pn03_settings.json");
+            if (exe_dir.parent_path().has_parent_path()) {
+                existing_candidates.push_back(exe_dir.parent_path().parent_path() / "config" / "pn03_settings.json");
+            }
+        }
+    }
+#endif
+
+    for (const auto& cand : existing_candidates) {
+        if (!cand.empty() && fs::exists(cand, ec)) {
+            return normalize_json_path(cand.string());
+        }
+    }
+
+    if (!exe_dir.empty()) {
+        if (exe_dir.has_parent_path() &&
+            (fs::is_directory(exe_dir.parent_path() / "config", ec) ||
+             fs::exists(exe_dir.parent_path() / "README.md", ec))) {
+            return normalize_json_path((exe_dir.parent_path() / "config" / "pn03_settings.json").string());
+        }
+        return normalize_json_path((exe_dir / "config" / "pn03_settings.json").string());
+    }
+    return "config/pn03_settings.json";
+}
+
 bool RuntimeConfig::save_to_json(const std::string& path) const {
-    std::ofstream out(path, std::ios::binary);
+    namespace fs = std::filesystem;
+    std::error_code ec;
+    fs::path p(path);
+    if (p.has_parent_path()) {
+        fs::create_directories(p.parent_path(), ec);
+    }
+    std::ofstream out(p, std::ios::binary | std::ios::trunc);
     if (!out.is_open()) return false;
     out << "{\n"
         << "  \"runtime_mode\": \"" << runtime_mode << "\",\n"
@@ -107,6 +158,10 @@ bool RuntimeConfig::save_to_json(const std::string& path) const {
         << "  \"bind_guide_target\": " << bind_guide_target << ",\n"
         << "  \"load_tools_rel_debug\": " << (load_tools_rel_debug ? "true" : "false") << ",\n"
         << "  \"skip_launcher_gui\": " << (skip_launcher_gui ? "true" : "false") << ",\n"
+        << "  \"cheat_god_mode\": " << (cheat_god_mode ? "true" : "false") << ",\n"
+        << "  \"cheat_infinite_energy\": " << (cheat_infinite_energy ? "true" : "false") << ",\n"
+        << "  \"cheat_infinite_credits\": " << (cheat_infinite_credits ? "true" : "false") << ",\n"
+        << "  \"cheat_unlock_all_suits\": " << (cheat_unlock_all_suits ? "true" : "false") << ",\n"
         << "  \"log_dir\": \"" << normalize_json_path(log_dir) << "\",\n"
         << "  \"log_level\": \"" << log_level << "\",\n"
         << "  \"log_max_file_mb\": " << log_max_file_mb << ",\n"
@@ -165,6 +220,10 @@ RuntimeConfig RuntimeConfig::load_from_json(const std::string& path) {
     cfg.bind_guide_target      = extract_json_int(s, "bind_guide_target", cfg.bind_guide_target);
     cfg.load_tools_rel_debug   = extract_json_bool(s, "load_tools_rel_debug", cfg.load_tools_rel_debug);
     cfg.skip_launcher_gui      = extract_json_bool(s, "skip_launcher_gui", cfg.skip_launcher_gui);
+    cfg.cheat_god_mode         = extract_json_bool(s, "cheat_god_mode", cfg.cheat_god_mode);
+    cfg.cheat_infinite_energy  = extract_json_bool(s, "cheat_infinite_energy", cfg.cheat_infinite_energy);
+    cfg.cheat_infinite_credits = extract_json_bool(s, "cheat_infinite_credits", cfg.cheat_infinite_credits);
+    cfg.cheat_unlock_all_suits = extract_json_bool(s, "cheat_unlock_all_suits", cfg.cheat_unlock_all_suits);
     cfg.log_dir                = extract_json_str(s, "log_dir", cfg.log_dir);
     cfg.log_level              = extract_json_str(s, "log_level", cfg.log_level);
     cfg.log_max_file_mb        = static_cast<uint32_t>(extract_json_int(s, "log_max_file_mb", static_cast<int>(cfg.log_max_file_mb)));
@@ -358,6 +417,60 @@ void FramePacer::wait_for_next_frame() {
 #else
     std::this_thread::sleep_for(std::chrono::microseconds(wait_us));
 #endif
+}
+
+void apply_runtime_cheats(const RuntimeConfig& cfg, Memory& mem) {
+    if (!cfg.cheat_god_mode && !cfg.cheat_infinite_energy &&
+        !cfg.cheat_infinite_credits && !cfg.cheat_unlock_all_suits) {
+        return;
+    }
+    const uint32_t pG = mem.read_u32(recomp::sym_addr::kSda_pG);
+    if (pG < kGcRamBase || !mem.is_valid_range(pG, 0x7000u)) {
+        return;
+    }
+    if (cfg.cheat_god_mode) {
+        const int16_t max_hp = mem.read_s16(pG + 26642u); // Global + 0x6812 (max barrier HP)
+        if (max_hp > 0) {
+            const int16_t cur_hp = mem.read_s16(pG + 26640u); // Global + 0x6810 (current HP)
+            if (cur_hp < max_hp) {
+                mem.write_u16(pG + 26640u, static_cast<uint16_t>(max_hp));
+            }
+        }
+    }
+    if (cfg.cheat_infinite_energy) {
+        // Capcom native unlimited suit energy flag checked in PlGaugeCheck (0x800AE550) & PlGaugeDown (0x800AE58C)
+        const uint32_t flags304 = mem.read_u32(pG + 304u);
+        mem.write_u32(pG + 304u, flags304 | 0x00002000u);
+        const int16_t max_en = mem.read_s16(pG + 26646u); // Global + 0x6816 (max Energy)
+        if (max_en > 0) {
+            const int16_t cur_en = mem.read_s16(pG + 26644u); // Global + 0x6814 (current Energy)
+            if (cur_en < max_en) {
+                mem.write_u16(pG + 26644u, static_cast<uint16_t>(max_en));
+            }
+        }
+    }
+    if (cfg.cheat_infinite_credits) {
+        const uint32_t pts = mem.read_u32(pG + 26664u); // Global + 0x6828 (Shop Points, 7 digits)
+        if (pts < 9999999u) {
+            mem.write_u32(pG + 26664u, 9999999u);
+        }
+    }
+    if (cfg.cheat_unlock_all_suits) {
+        constexpr uint32_t kSuitTblBase = 26776u; // Global + 0x6898 (Suit[0..10], 16B each)
+        // Gate on initialized suit table so boot/title-screen work isn't disturbed pre-game.
+        if (mem.read_u8(pG + kSuitTblBase + 2u) > 0u || mem.read_u8(pG + kSuitTblBase) != 0u) {
+            const uint32_t gflags = mem.read_u32(pG + 4u);
+            mem.write_u32(pG + 4u, gflags | 0x60000000u); // Unlock Black (#9), Papillon (#10), max upgrade caps
+            for (uint32_t i = 0; i < 11u; ++i) {
+                const uint32_t s_va = pG + kSuitTblBase + i * 16u;
+                mem.write_u8(s_va + 0u, 1u); // owned (cSuitCtrl::getSuitHave)
+                if (i != 10u && mem.read_u8(s_va + 3u) < 5u) mem.write_u8(s_va + 3u, 5u); // Barrier Lv5
+                if (mem.read_u8(s_va + 4u) < 5u) mem.write_u8(s_va + 4u, 5u); // Palm Shot Lv5
+                if (mem.read_u8(s_va + 5u) < 2u) mem.write_u8(s_va + 5u, 2u); // Automatic Lv2
+                if (mem.read_u8(s_va + 6u) < 6u) mem.write_u8(s_va + 6u, 6u); // Energy Drive Lv6
+            }
+        }
+    }
 }
 
 } // namespace pn03

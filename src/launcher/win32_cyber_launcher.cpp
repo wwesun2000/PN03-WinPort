@@ -1,6 +1,7 @@
 #include "pn03_cyber_launcher.hpp"
 #include "pn03_logger.hpp"
 #include "pn03_config.hpp"
+#include "pn03_runtime.hpp"
 
 #include <algorithm>
 #include <array>
@@ -160,7 +161,11 @@ enum HitZoneId : int {
     HZ_BIND_GUIDE = 27,
     HZ_SLIDER_BRIGHTNESS = 28,
     HZ_SW_LIMIT_FPS = 29,
-    HZ_DD_BACKEND = 30
+    HZ_DD_BACKEND = 30,
+    HZ_SW_CHEAT_GOD = 31,
+    HZ_SW_CHEAT_ENERGY = 32,
+    HZ_SW_CHEAT_CREDITS = 33,
+    HZ_SW_CHEAT_SUITS = 34
 };
 
 struct HitZone {
@@ -175,7 +180,9 @@ struct DropdownChoice {
 
 struct LauncherUiState {
     RuntimeConfig* cfg = nullptr;
+    std::string config_path = "config/pn03_settings.json";
     std::string iso_mount_summary;
+    std::string pad_backend_label = "READY";
     std::unique_ptr<Gdiplus::Image> img_crest;
     std::unique_ptr<Gdiplus::Image> img_vanessa;
 
@@ -211,21 +218,44 @@ struct LauncherUiState {
 #define XINPUT_GAMEPAD_GUIDE 0x0400
 #endif
 
-static DWORD query_launcher_xinput_ex(DWORD user_index, XINPUT_STATE* out_state) {
-    using FnXInputGetStateEx = DWORD(WINAPI*)(DWORD, XINPUT_STATE*);
-    static FnXInputGetStateEx s_fn_ex = []() -> FnXInputGetStateEx {
-        const wchar_t* dlls[] = {L"xinput1_4.dll", L"xinput1_3.dll", L"xinput9_1_0.dll"};
-        for (const wchar_t* name : dlls) {
-            HMODULE mod = LoadLibraryW(name);
-            if (mod) {
-                auto p = reinterpret_cast<FnXInputGetStateEx>(GetProcAddress(mod, MAKEINTRESOURCEA(100)));
-                if (p) return p;
-            }
+static void save_launcher_state(LauncherUiState& st) {
+    if (!st.cfg) return;
+    if (st.edit_iso && IsWindow(st.edit_iso)) {
+        wchar_t iso_buf[MAX_PATH * 2] = {0};
+        GetWindowTextW(st.edit_iso, iso_buf, MAX_PATH * 2);
+        std::string typed = wide_to_utf8(iso_buf);
+        while (!typed.empty() && (typed.front() == ' ' || typed.front() == '\t' || typed.front() == '"')) {
+            typed.erase(0, 1);
         }
-        return nullptr;
-    }();
-    if (s_fn_ex) return s_fn_ex(user_index, out_state);
-    return XInputGetState(user_index, out_state);
+        while (!typed.empty() && (typed.back() == ' ' || typed.back() == '\t' || typed.back() == '"')) {
+            typed.pop_back();
+        }
+        st.cfg->iso_path = typed;
+    }
+    const std::string target = !st.config_path.empty()
+        ? st.config_path
+        : RuntimeConfig::resolve_config_path();
+    st.cfg->save_to_json(target);
+}
+
+static WORD pack_xinput_mask_from_state(const XboxInputState& x) {
+    WORD w = 0;
+    if (x.dpad_up)    w |= XINPUT_GAMEPAD_DPAD_UP;
+    if (x.dpad_down)  w |= XINPUT_GAMEPAD_DPAD_DOWN;
+    if (x.dpad_left)  w |= XINPUT_GAMEPAD_DPAD_LEFT;
+    if (x.dpad_right) w |= XINPUT_GAMEPAD_DPAD_RIGHT;
+    if (x.btn_start)  w |= XINPUT_GAMEPAD_START;
+    if (x.btn_back)   w |= XINPUT_GAMEPAD_BACK;
+    if (x.btn_ls)     w |= XINPUT_GAMEPAD_LEFT_THUMB;
+    if (x.btn_rs)     w |= XINPUT_GAMEPAD_RIGHT_THUMB;
+    if (x.btn_lb)     w |= XINPUT_GAMEPAD_LEFT_SHOULDER;
+    if (x.btn_rb)     w |= XINPUT_GAMEPAD_RIGHT_SHOULDER;
+    if (x.btn_guide)  w |= XINPUT_GAMEPAD_GUIDE;
+    if (x.btn_a)      w |= XINPUT_GAMEPAD_A;
+    if (x.btn_b)      w |= XINPUT_GAMEPAD_B;
+    if (x.btn_x)      w |= XINPUT_GAMEPAD_X;
+    if (x.btn_y)      w |= XINPUT_GAMEPAD_Y;
+    return w;
 }
 
 static int* config_bind_ptr_for_zone(RuntimeConfig& cfg, HitZoneId id) {
@@ -278,9 +308,14 @@ static int detect_captured_xbox_source(WORD just_pressed, bool lt_edge, bool rt_
 }
 
 static std::wstring resolution_label(const RuntimeConfig& cfg) {
-    if (cfg.render_width >= 3840) return L"3840x2160 4K (6x EFB)";
-    if (cfg.render_width >= 2560) return L"2560x1440 QHD (4x EFB)";
-    if (cfg.render_width >= 1920) return L"1920x1080 FHD (3x EFB)";
+    if (cfg.internal_scale_factor <= 1u) {
+        if (cfg.render_width >= 1920u) return L"1920x1080 FHD (1x Native EFB)";
+        if (cfg.render_width >= 1280u) return L"1280x720 HD (1x Native EFB - iGPU)";
+        return L"640x480 480p (1x Native EFB - Fastest)";
+    }
+    if (cfg.render_width >= 3840u && cfg.internal_scale_factor >= 6u) return L"3840x2160 4K (6x EFB)";
+    if (cfg.render_width >= 2560u && cfg.internal_scale_factor >= 4u) return L"2560x1440 QHD (4x EFB)";
+    if (cfg.render_width >= 1920u && cfg.internal_scale_factor >= 3u) return L"1920x1080 FHD (3x EFB)";
     return L"1280x720 HD (2x EFB)";
 }
 
@@ -627,16 +662,20 @@ static void draw_oscilloscope_box(Gdiplus::Graphics& g, const LauncherUiState& s
     for (float gy = py; gy < py + ph; gy += 20.0f) g.DrawLine(&grid_pen, px, gy, px + pw, gy);
 
     // Center AEGIS reticle diamond + outer ring
+    const float scale_y = (std::min)(1.0f, ph / 110.0f);
     float rcx = px + pw * 0.5f;
     float rcy = py + ph * 0.5f;
+    const float r_out = 38.0f * scale_y;
+    const float r_in  = 24.0f * scale_y;
+    const float r_dia = 30.0f * scale_y;
     Gdiplus::Pen ring_pen(Gdiplus::Color(70, 0, 229, 255), 1.2f);
-    g.DrawEllipse(&ring_pen, rcx - 38.0f, rcy - 38.0f, 76.0f, 76.0f);
-    g.DrawEllipse(&ring_pen, rcx - 24.0f, rcy - 24.0f, 48.0f, 48.0f);
+    g.DrawEllipse(&ring_pen, rcx - r_out, rcy - r_out, r_out * 2.0f, r_out * 2.0f);
+    g.DrawEllipse(&ring_pen, rcx - r_in,  rcy - r_in,  r_in  * 2.0f, r_in  * 2.0f);
     float rot = st.anim_phase * 0.8f;
     Gdiplus::PointF dia[4];
     for (int k = 0; k < 4; ++k) {
         float a = rot + static_cast<float>(k) * 1.5707963f;
-        dia[k] = Gdiplus::PointF(rcx + 30.0f * std::cos(a), rcy + 30.0f * std::sin(a));
+        dia[k] = Gdiplus::PointF(rcx + r_dia * std::cos(a), rcy + r_dia * std::sin(a));
     }
     Gdiplus::Pen dia_pen(Gdiplus::Color(130, 0, 229, 255), 1.4f);
     g.DrawPolygon(&dia_pen, dia, 4);
@@ -649,10 +688,10 @@ static void draw_oscilloscope_box(Gdiplus::Graphics& g, const LauncherUiState& s
         float u = static_cast<float>(i) / static_cast<float>(kSamples - 1);
         float sx = px + u * pw;
         float env = std::sin(u * 3.1415926f);
-        float cy_off = std::sin(u * 14.0f + st.anim_phase * 3.0f) * 26.0f * env
-                     + std::cos(u * 29.0f - st.anim_phase * 4.5f) * 8.0f * env;
-        float am_off = std::cos(u * 11.0f - st.anim_phase * 2.4f) * 18.0f * env
-                     + std::sin(u * 23.0f + st.anim_phase * 3.8f) * 6.0f;
+        float cy_off = (std::sin(u * 14.0f + st.anim_phase * 3.0f) * 26.0f * env
+                      + std::cos(u * 29.0f - st.anim_phase * 4.5f) * 8.0f * env) * scale_y;
+        float am_off = (std::cos(u * 11.0f - st.anim_phase * 2.4f) * 18.0f * env
+                      + std::sin(u * 23.0f + st.anim_phase * 3.8f) * 6.0f) * scale_y;
         wave_cyan[static_cast<size_t>(i)]  = Gdiplus::PointF(sx, rcy + cy_off);
         wave_amber[static_cast<size_t>(i)] = Gdiplus::PointF(sx, rcy + am_off * 0.72f);
     }
@@ -672,6 +711,40 @@ static void draw_oscilloscope_box(Gdiplus::Graphics& g, const LauncherUiState& s
     g.DrawString(foot.str().c_str(), -1, &mono_font, Gdiplus::RectF(x + 8.0f, y + h - 22.0f, w - 16.0f, 18.0f), &lsf, &foot_br);
 }
 
+static void draw_cyber_cheat_pill(Gdiplus::Graphics& g, LauncherUiState& st, HitZoneId id,
+                                  float x, float y, float w, float h,
+                                  const std::wstring& label, bool enabled,
+                                  const Gdiplus::Font& tiny_font) {
+    Gdiplus::RectF rc(x, y, w, h);
+    st.zones.push_back({id, rc});
+    const bool hov = (st.hover_id == id);
+
+    Gdiplus::GraphicsPath p;
+    add_round_rect(p, rc, 4.0f);
+    Gdiplus::SolidBrush bg(enabled
+        ? Gdiplus::Color(225, 48, 28, 12)
+        : (hov ? Gdiplus::Color(235, 20, 36, 54) : Gdiplus::Color(225, 11, 18, 28)));
+    g.FillPath(&bg, &p);
+    Gdiplus::Pen pen(enabled
+        ? Gdiplus::Color(255, 255, 156, 36)
+        : (hov ? Gdiplus::Color(255, 0, 229, 255) : Gdiplus::Color(200, 44, 68, 94)),
+        (enabled || hov) ? 1.4f : 1.0f);
+    g.DrawPath(&pen, &p);
+
+    Gdiplus::StringFormat lsf, rsf;
+    lsf.SetAlignment(Gdiplus::StringAlignmentNear);
+    lsf.SetLineAlignment(Gdiplus::StringAlignmentCenter);
+    lsf.SetFormatFlags(Gdiplus::StringFormatFlagsNoWrap);
+    rsf.SetAlignment(Gdiplus::StringAlignmentFar);
+    rsf.SetLineAlignment(Gdiplus::StringAlignmentCenter);
+    rsf.SetFormatFlags(Gdiplus::StringFormatFlagsNoWrap);
+
+    Gdiplus::SolidBrush lbl_br(enabled ? Gdiplus::Color(255, 255, 234, 196) : Gdiplus::Color(255, 208, 222, 238));
+    Gdiplus::SolidBrush val_br(enabled ? Gdiplus::Color(255, 255, 168, 42) : Gdiplus::Color(255, 120, 144, 170));
+    g.DrawString(label.c_str(), -1, &tiny_font, Gdiplus::RectF(x + 8.0f, y, w - 42.0f, h), &lsf, &lbl_br);
+    g.DrawString(enabled ? L"ON" : L"OFF", -1, &tiny_font, Gdiplus::RectF(x + w - 38.0f, y, 30.0f, h), &rsf, &val_br);
+}
+
 static void draw_xbox_wireframe(Gdiplus::Graphics& g, const LauncherUiState& st,
                                 float x, float y, float w, float h,
                                 const Gdiplus::Font& tiny_font, const Gdiplus::Font& btn_font) {
@@ -687,19 +760,20 @@ static void draw_xbox_wireframe(Gdiplus::Graphics& g, const LauncherUiState& st,
     std::wostringstream hdr;
     if (st.cfg->control_scheme_preset >= 0 && st.cfg->control_scheme_preset <= 3) {
         wchar_t preset_ch = static_cast<wchar_t>(L'A' + st.cfg->control_scheme_preset);
-        hdr << L"XINPUT // KEYCONFIG PRESET " << preset_ch;
+        hdr << L"PAD // PRESET " << preset_ch;
     } else {
-        hdr << L"XINPUT // CUSTOM REMAPPED";
+        hdr << L"PAD // CUSTOM REMAP";
     }
     Gdiplus::StringFormat lsf;
     lsf.SetAlignment(Gdiplus::StringAlignmentNear);
     Gdiplus::SolidBrush cy_txt(Gdiplus::Color(255, 146, 182, 210));
-    g.DrawString(hdr.str().c_str(), -1, &tiny_font, Gdiplus::RectF(x + 8.0f, y + 4.0f, w - 110.0f, 15.0f), &lsf, &cy_txt);
+    g.DrawString(hdr.str().c_str(), -1, &tiny_font, Gdiplus::RectF(x + 8.0f, y + 4.0f, w - 150.0f, 15.0f), &lsf, &cy_txt);
 
     Gdiplus::StringFormat rsf;
     rsf.SetAlignment(Gdiplus::StringAlignmentFar);
     Gdiplus::SolidBrush st_txt(st.pad_connected ? Gdiplus::Color(255, 88, 255, 164) : Gdiplus::Color(255, 0, 229, 255));
-    g.DrawString(st.pad_connected ? L"PAD 0: ACTIVE" : L"PAD 0: READY", -1, &tiny_font, Gdiplus::RectF(x + w - 108.0f, y + 4.0f, 100.0f, 15.0f), &rsf, &st_txt);
+    std::wstring st_msg = st.pad_connected ? (L"ACTIVE: " + utf8_to_wide(st.pad_backend_label)) : L"READY (SDL/XI/DI8)";
+    g.DrawString(st_msg.c_str(), -1, &tiny_font, Gdiplus::RectF(x + w - 168.0f, y + 4.0f, 160.0f, 15.0f), &rsf, &st_txt);
 
     // Coordinate transform from 260x155 SVG space to compact diagram center
     const float sc = 0.78f;
@@ -1075,10 +1149,20 @@ static void render_launcher_to_graphics(Gdiplus::Graphics& g, int width, int hei
                           L"Tools.rel Sound Test & Debug Hooks", st.cfg->load_tools_rel_debug, true, f_lbl, f_tiny);
     draw_cyber_switch_row(g, st, HZ_SW_DEFLICKER, card_x2 + 18.0f, card_y + 198.0f, card_w - 36.0f,
                           L"Bypass 480i Copy Deflicker Filter", st.cfg->disable_copy_deflicker, false, f_lbl, f_tiny);
-    draw_oscilloscope_box(g, st, card_x2 + 18.0f, card_y + 244.0f, card_w - 36.0f, 180.0f, f_tiny, f_mono);
+    draw_oscilloscope_box(g, st, card_x2 + 18.0f, card_y + 240.0f, card_w - 36.0f, 102.0f, f_tiny, f_mono);
+    g.DrawString(L"BUILTIN CHEAT TOGGLES (OFF BY DEFAULT):", -1, &f_tiny,
+                 Gdiplus::PointF(card_x2 + 18.0f, card_y + 347.0f), &muted_br);
+    const float cp_w = 173.0f;
+    const float cp_h = 25.0f;
+    const float cp_x0 = card_x2 + 18.0f;
+    const float cp_x1 = cp_x0 + cp_w + 10.0f;
+    draw_cyber_cheat_pill(g, st, HZ_SW_CHEAT_GOD,     cp_x0, card_y + 365.0f, cp_w, cp_h, L"INF SHIELD HP",  st.cfg->cheat_god_mode,         f_tiny);
+    draw_cyber_cheat_pill(g, st, HZ_SW_CHEAT_ENERGY,  cp_x1, card_y + 365.0f, cp_w, cp_h, L"INF ENERGY / ED",st.cfg->cheat_infinite_energy,  f_tiny);
+    draw_cyber_cheat_pill(g, st, HZ_SW_CHEAT_CREDITS, cp_x0, card_y + 395.0f, cp_w, cp_h, L"9.99M CREDITS",  st.cfg->cheat_infinite_credits, f_tiny);
+    draw_cyber_cheat_pill(g, st, HZ_SW_CHEAT_SUITS,   cp_x1, card_y + 395.0f, cp_w, cp_h, L"ALL SUITS MAX",  st.cfg->cheat_unlock_all_suits, f_tiny);
 
-    // --- CARD 3: XBOX XINPUT CONTROLLER ---
-    draw_card_shell(g, card_x3, card_y, card_w, card_h, L"XBOX XINPUT CONTROLLER", st.cfg->enable_xinput, st.pad_connected, true, f_card_hdr);
+    // --- CARD 3: GAMEPAD CONTROLLER (SDL2 / XINPUT / DIRECTINPUT / WINMM) ---
+    draw_card_shell(g, card_x3, card_y, card_w, card_h, L"GAMEPAD CONTROLLER", st.cfg->enable_xinput, st.pad_connected, true, f_card_hdr);
     g.DrawString(L"Preset (A-D)", -1, &f_lbl,
                  Gdiplus::RectF(card_x3 + 18.0f, card_y + 44.0f, 110.0f, 26.0f), &lsf, &white_br);
 
@@ -1152,8 +1236,10 @@ static void render_launcher_to_graphics(Gdiplus::Graphics& g, int width, int hei
 
     CyberLauncherUI helper(*st.cfg);
     std::wstring diag_line1 = utf8_to_wide(helper.build_diagnostic_readout());
+    const bool use_vk = (st.cfg->backend == GraphicsBackend::Vulkan13);
     std::wostringstream diag_line2;
-    diag_line2 << L"D3D11 HW | KB PLAY: WASD Move | IJKL Cam | Space/Z=A Shift/X=B Q=L E=R Tab=Z Enter/Esc=Pause";
+    diag_line2 << (use_vk ? L"VULKAN 1.3" : L"D3D11 HW")
+               << L" | KB PLAY: WASD Move | IJKL Cam | Space/Z=A Shift/X=B Q=L E=R Tab=Z Enter/Esc=Pause";
     Gdiplus::StringFormat dsf;
     dsf.SetAlignment(Gdiplus::StringAlignmentNear);
     dsf.SetLineAlignment(Gdiplus::StringAlignmentCenter);
@@ -1185,7 +1271,7 @@ static void render_launcher_to_graphics(Gdiplus::Graphics& g, int width, int hei
     g.DrawString(L"LAUNCH P.N.03 ENGINE  >>", -1, &f_cta,
                  Gdiplus::RectF(launch_rc.X, launch_rc.Y + 8.0f, launch_rc.Width, 30.0f), &csf, &dark_ink);
     Gdiplus::SolidBrush dark_sub(Gdiplus::Color(215, 26, 12, 4));
-    g.DrawString(L"COMMIT TO config/pn03_settings.json & BOOT D3D11", -1, &f_tiny,
+    g.DrawString(use_vk ? L"SAVE CONFIG & BOOT VULKAN 1.3" : L"SAVE CONFIG & BOOT D3D11", -1, &f_tiny,
                  Gdiplus::RectF(launch_rc.X, launch_rc.Y + 38.0f, launch_rc.Width, 20.0f), &csf, &dark_sub);
 }
 
@@ -1198,11 +1284,18 @@ static void populate_dropdown_choices(HitZoneId id, const RuntimeConfig& cfg,
             {L"3840x2160 4K (6x EFB)", 0},
             {L"2560x1440 QHD (4x EFB)", 1},
             {L"1920x1080 FHD (3x EFB)", 2},
-            {L"1280x720 HD (2x EFB)", 3}
+            {L"1280x720 HD (2x EFB)", 3},
+            {L"1920x1080 FHD (1x Native EFB)", 4},
+            {L"1280x720 HD (1x Native EFB - iGPU)", 5},
+            {L"640x480 480p (1x Native EFB - Fastest)", 6}
         };
-        if (cfg.render_width >= 3840) out_selected_idx = 0;
-        else if (cfg.render_width >= 2560) out_selected_idx = 1;
-        else if (cfg.render_width >= 1920) out_selected_idx = 2;
+        if (cfg.internal_scale_factor <= 1u) {
+            if (cfg.render_width >= 1920u) out_selected_idx = 4;
+            else if (cfg.render_width >= 1280u) out_selected_idx = 5;
+            else out_selected_idx = 6;
+        } else if (cfg.render_width >= 3840u && cfg.internal_scale_factor >= 6u) out_selected_idx = 0;
+        else if (cfg.render_width >= 2560u && cfg.internal_scale_factor >= 4u) out_selected_idx = 1;
+        else if (cfg.render_width >= 1920u && cfg.internal_scale_factor >= 3u) out_selected_idx = 2;
         else out_selected_idx = 3;
     } else if (id == HZ_DD_DISPLAY_MODE) {
         out_choices = {
@@ -1318,7 +1411,10 @@ static void apply_dropdown_choice(HitZoneId id, int val, LauncherUiState& st) {
         if (val == 0)      { cfg.render_width = 3840; cfg.render_height = 2160; cfg.internal_scale_factor = 6; }
         else if (val == 1) { cfg.render_width = 2560; cfg.render_height = 1440; cfg.internal_scale_factor = 4; }
         else if (val == 2) { cfg.render_width = 1920; cfg.render_height = 1080; cfg.internal_scale_factor = 3; }
-        else               { cfg.render_width = 1280; cfg.render_height = 720;  cfg.internal_scale_factor = 2; }
+        else if (val == 3) { cfg.render_width = 1280; cfg.render_height = 720;  cfg.internal_scale_factor = 2; }
+        else if (val == 4) { cfg.render_width = 1920; cfg.render_height = 1080; cfg.internal_scale_factor = 1; }
+        else if (val == 5) { cfg.render_width = 1280; cfg.render_height = 720;  cfg.internal_scale_factor = 1; }
+        else               { cfg.render_width = 640;  cfg.render_height = 480;  cfg.internal_scale_factor = 1; }
     } else if (id == HZ_DD_DISPLAY_MODE) {
         cfg.window_mode = static_cast<WindowMode>(val);
     } else if (id == HZ_DD_ANTIALIASING) {
@@ -1495,17 +1591,18 @@ static LRESULT CALLBACK CyberLauncherWndProc(HWND hwnd, UINT msg, WPARAM wParam,
                 st->anim_phase += 0.09f;
                 if (st->anim_phase > 628.3f) st->anim_phase = 0.0f;
 
-                XINPUT_STATE xs{};
-                if (st->cfg->enable_xinput &&
-                    query_launcher_xinput_ex(static_cast<DWORD>(st->cfg->controller_index), &xs) == ERROR_SUCCESS) {
+                std::string pad_backend;
+                const XboxInputState xs = PadXInputBridge::poll_any_controller(*st->cfg, &pad_backend);
+                if (xs.connected) {
                     st->pad_connected = true;
-                    st->pad_lx = static_cast<float>(xs.Gamepad.sThumbLX) / 32768.0f;
-                    st->pad_ly = static_cast<float>(xs.Gamepad.sThumbLY) / 32768.0f;
-                    st->pad_rx = static_cast<float>(xs.Gamepad.sThumbRX) / 32768.0f;
-                    st->pad_ry = static_cast<float>(xs.Gamepad.sThumbRY) / 32768.0f;
-                    st->pad_buttons = xs.Gamepad.wButtons;
-                    st->pad_lt = static_cast<float>(xs.Gamepad.bLeftTrigger) / 255.0f;
-                    st->pad_rt = static_cast<float>(xs.Gamepad.bRightTrigger) / 255.0f;
+                    st->pad_backend_label = pad_backend;
+                    st->pad_lx = xs.left_stick_x;
+                    st->pad_ly = xs.left_stick_y;
+                    st->pad_rx = xs.right_stick_x;
+                    st->pad_ry = xs.right_stick_y;
+                    st->pad_buttons = pack_xinput_mask_from_state(xs);
+                    st->pad_lt = xs.left_trigger;
+                    st->pad_rt = xs.right_trigger;
 
                     if (st->listening_zone >= HZ_BIND_A && st->listening_zone <= HZ_BIND_START) {
                         WORD just_pressed = static_cast<WORD>(st->pad_buttons & ~st->listen_prev_buttons);
@@ -1518,6 +1615,7 @@ static LRESULT CALLBACK CyberLauncherWndProc(HWND hwnd, UINT msg, WPARAM wParam,
                             if (int* ptr = config_bind_ptr_for_zone(*st->cfg, st->listening_zone)) {
                                 *ptr = captured;
                                 st->cfg->control_scheme_preset = 4; // Custom
+                                save_launcher_state(*st);
                             }
                             st->listening_zone = HZ_NONE;
                         }
@@ -1527,6 +1625,7 @@ static LRESULT CALLBACK CyberLauncherWndProc(HWND hwnd, UINT msg, WPARAM wParam,
                     }
                 } else {
                     st->pad_connected = false;
+                    st->pad_backend_label = "READY";
                     st->pad_lx = st->pad_ly = st->pad_rx = st->pad_ry = 0.0f;
                     st->pad_buttons = 0;
                     st->pad_lt = st->pad_rt = 0.0f;
@@ -1600,7 +1699,7 @@ static LRESULT CALLBACK CyberLauncherWndProc(HWND hwnd, UINT msg, WPARAM wParam,
                 ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
                 if (GetOpenFileNameW(&ofn)) {
                     SetWindowTextW(st->edit_iso, file_buf);
-                    st->cfg->iso_path = wide_to_utf8(file_buf);
+                    save_launcher_state(*st);
                     InvalidateRect(hwnd, nullptr, FALSE);
                 }
             } else if (h == HZ_DD_RESOLUTION || h == HZ_DD_DISPLAY_MODE || h == HZ_DD_ANTIALIASING ||
@@ -1608,34 +1707,53 @@ static LRESULT CALLBACK CyberLauncherWndProc(HWND hwnd, UINT msg, WPARAM wParam,
                        (h >= HZ_BIND_A && h <= HZ_BIND_GUIDE)) {
                 st->listening_zone = HZ_NONE;
                 show_cyber_dropdown_menu(hwnd, *st, h);
+                save_launcher_state(*st);
             } else if (h == HZ_SW_VSYNC) {
                 st->cfg->vsync = !st->cfg->vsync;
+                save_launcher_state(*st);
                 InvalidateRect(hwnd, nullptr, FALSE);
             } else if (h == HZ_SW_LIMIT_FPS) {
                 st->cfg->limit_fps_60 = !st->cfg->limit_fps_60;
+                save_launcher_state(*st);
                 InvalidateRect(hwnd, nullptr, FALSE);
             } else if (h == HZ_SW_HD_FONT) {
                 st->cfg->enable_hd_chinese_font = !st->cfg->enable_hd_chinese_font;
+                save_launcher_state(*st);
                 InvalidateRect(hwnd, nullptr, FALSE);
             } else if (h == HZ_SW_TOOLS_REL) {
                 st->cfg->load_tools_rel_debug = !st->cfg->load_tools_rel_debug;
+                save_launcher_state(*st);
                 InvalidateRect(hwnd, nullptr, FALSE);
             } else if (h == HZ_SW_DEFLICKER) {
                 st->cfg->disable_copy_deflicker = !st->cfg->disable_copy_deflicker;
+                save_launcher_state(*st);
+                InvalidateRect(hwnd, nullptr, FALSE);
+            } else if (h == HZ_SW_CHEAT_GOD) {
+                st->cfg->cheat_god_mode = !st->cfg->cheat_god_mode;
+                save_launcher_state(*st);
+                InvalidateRect(hwnd, nullptr, FALSE);
+            } else if (h == HZ_SW_CHEAT_ENERGY) {
+                st->cfg->cheat_infinite_energy = !st->cfg->cheat_infinite_energy;
+                save_launcher_state(*st);
+                InvalidateRect(hwnd, nullptr, FALSE);
+            } else if (h == HZ_SW_CHEAT_CREDITS) {
+                st->cfg->cheat_infinite_credits = !st->cfg->cheat_infinite_credits;
+                save_launcher_state(*st);
+                InvalidateRect(hwnd, nullptr, FALSE);
+            } else if (h == HZ_SW_CHEAT_SUITS) {
+                st->cfg->cheat_unlock_all_suits = !st->cfg->cheat_unlock_all_suits;
+                save_launcher_state(*st);
                 InvalidateRect(hwnd, nullptr, FALSE);
             } else if (h >= HZ_PRESET_A && h <= HZ_PRESET_D) {
                 st->listening_zone = HZ_NONE;
                 st->cfg->apply_control_preset(static_cast<int>(h - HZ_PRESET_A));
+                save_launcher_state(*st);
                 InvalidateRect(hwnd, nullptr, FALSE);
             } else if (h == HZ_BTN_LAUNCH) {
-                wchar_t iso_buf[MAX_PATH * 2] = {0};
-                GetWindowTextW(st->edit_iso, iso_buf, MAX_PATH * 2);
-                if (iso_buf[0] != L'\0') {
-                    st->cfg->iso_path = wide_to_utf8(iso_buf);
-                }
-                st->cfg->save_to_json("config/pn03_settings.json");
+                save_launcher_state(*st);
                 st->launched = true;
-                PN03_LOGF(LogLevel::Info, "LAUNCHER", "LAUNCH button clicked -> launching engine (iso=%s)", st->cfg->iso_path.c_str());
+                PN03_LOGF(LogLevel::Info, "LAUNCHER", "LAUNCH button clicked -> launching engine (iso=%s cfg=%s)",
+                          st->cfg->iso_path.c_str(), st->config_path.c_str());
                 DestroyWindow(hwnd);
             }
             return 0;
@@ -1645,6 +1763,7 @@ static LRESULT CALLBACK CyberLauncherWndProc(HWND hwnd, UINT msg, WPARAM wParam,
             if (st && st->dragging_slider != HZ_NONE) {
                 st->dragging_slider = HZ_NONE;
                 ReleaseCapture();
+                save_launcher_state(*st);
                 InvalidateRect(hwnd, nullptr, FALSE);
             }
             return 0;
@@ -1674,6 +1793,9 @@ static LRESULT CALLBACK CyberLauncherWndProc(HWND hwnd, UINT msg, WPARAM wParam,
         }
 
         case WM_CLOSE:
+            if (st) {
+                save_launcher_state(*st);
+            }
             DestroyWindow(hwnd);
             return 0;
 
@@ -1758,6 +1880,7 @@ bool CyberLauncherUI::run_modal_launcher_window(const std::string& iso_mount_sum
 
     LauncherUiState state{};
     state.cfg = &cfg_;
+    state.config_path = config_path_;
     state.iso_mount_summary = iso_mount_summary;
 
     std::wstring crest_path = resolve_ui_asset_path(L"pn03_header_crest.png");
@@ -1828,6 +1951,7 @@ bool CyberLauncherUI::render_launcher_preview_bmp(const std::string& bmp_path, c
 
     LauncherUiState state{};
     state.cfg = &cfg_;
+    state.config_path = config_path_;
     state.iso_mount_summary = iso_mount_summary;
     state.live_edit_control = false;
     state.pad_connected = true;

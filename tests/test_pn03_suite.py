@@ -95,7 +95,7 @@ class TestPN03StaticRecompAndRuntime(unittest.TestCase):
         res_test = subprocess.run(
             [test_bin, iso_path], cwd=PROJECT_ROOT, capture_output=True, text=True, encoding="utf-8", check=True
         )
-        self.assertIn("ALL C++20 RUNTIME & STATIC RECOMPILATION TESTS PASSED (27/27)!", res_test.stdout)
+        self.assertIn("ALL C++20 RUNTIME & STATIC RECOMPILATION TESTS PASSED (28/28)!", res_test.stdout)
 
         res_self = subprocess.run(
             [app_bin, "--self-test", "--iso", iso_path],
