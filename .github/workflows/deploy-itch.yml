@@ -1,0 +1,92 @@
+name: Deploy Release to itch.io
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to deploy (leave empty for latest release, e.g. v2.4.0)'
+        required: false
+        default: ''
+      channel:
+        description: 'itch.io butler channel'
+        required: false
+        default: 'win64'
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-to-itch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Validate Butler API key secret
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+        run: |
+          if [ -z "$BUTLER_API_KEY" ]; then
+            echo "::error::Missing repository secret BUTLER_API_KEY. Create an API key at https://itch.io/user/settings/api-keys and add it under GitHub Settings -> Secrets and variables -> Actions -> Secrets."
+            exit 1
+          fi
+
+      - name: Resolve release tag & itch.io target
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_TAG: ${{ github.event.release.tag_name }}
+          INPUT_TAG: ${{ inputs.tag }}
+          INPUT_CHANNEL: ${{ inputs.channel }}
+          VAR_ITCH_TARGET: ${{ vars.ITCH_TARGET }}
+        run: |
+          TAG="${EVENT_TAG:-$INPUT_TAG}"
+          if [ -z "$TAG" ]; then
+            TAG="$(gh release list --repo "$GITHUB_REPOSITORY" --limit 1 --json tagName --jq '.[0].tagName')"
+          fi
+          if [ -z "$TAG" ] || [ "$TAG" = "null" ]; then
+            echo "::error::Could not determine a GitHub Release tag to deploy."
+            exit 1
+          fi
+          TARGET="${VAR_ITCH_TARGET:-wwesun2000/pn03-winport}"
+          CHANNEL="${INPUT_CHANNEL:-win64}"
+          echo "RELEASE_TAG=$TAG" >> "$GITHUB_ENV"
+          echo "ITCH_TARGET=$TARGET" >> "$GITHUB_ENV"
+          echo "ITCH_CHANNEL=$CHANNEL" >> "$GITHUB_ENV"
+          echo "Deploying $TAG -> ${TARGET}:${CHANNEL}"
+
+      - name: Download release archive from GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p release_zip itch_stage
+          gh release download "$RELEASE_TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern '*win64.zip' \
+            --dir release_zip
+          ZIP_FILE="$(find release_zip -maxdepth 1 -type f -name '*win64.zip' | head -n 1)"
+          if [ -z "$ZIP_FILE" ]; then
+            echo "::error::No *win64.zip asset found in release $RELEASE_TAG."
+            exit 1
+          fi
+          unzip -q "$ZIP_FILE" -d itch_stage
+          test -f itch_stage/PN03_WinPort.exe
+          test -f itch_stage/config/pn03_settings.json
+          ls -lh itch_stage
+
+      - name: Install itch.io butler CLI
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          curl -fL -o butler.zip "https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default"
+          unzip -q butler.zip -d "$HOME/.local/bin"
+          chmod +x "$HOME/.local/bin/butler"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          "$HOME/.local/bin/butler" -V
+
+      - name: Push build to itch.io via butler
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+        run: |
+          VERSION="${RELEASE_TAG#v}"
+          butler push itch_stage "${ITCH_TARGET}:${ITCH_CHANNEL}" --userversion "$VERSION"
+          butler status "${ITCH_TARGET}"
