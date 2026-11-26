@@ -128,3 +128,27 @@ jobs:
           files: ${{ env.ZIP_PATH }}
           generate_release_notes: true
           fail_on_unmatched_files: true
+
+      - name: Deploy Release to itch.io on tag push
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+          VAR_ITCH_TARGET: ${{ vars.ITCH_TARGET }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ([string]::IsNullOrWhiteSpace($env:BUTLER_API_KEY)) {
+            Write-Host "BUTLER_API_KEY secret is not configured; skipping itch.io push."
+            exit 0
+          }
+          $target = if ([string]::IsNullOrWhiteSpace($env:VAR_ITCH_TARGET)) { "wwesun2000/pn03-winport" } else { $env:VAR_ITCH_TARGET }
+          $version = $env:GITHUB_REF_NAME -replace '^v', ''
+          New-Item -ItemType Directory -Force -Path "butler_bin" | Out-Null
+          Invoke-WebRequest -Uri "https://broth.itch.zone/butler/windows-amd64/LATEST/archive/default" -OutFile "butler.zip"
+          Expand-Archive -Path "butler.zip" -DestinationPath "butler_bin" -Force
+          .\butler_bin\butler.exe -V
+          .\butler_bin\butler.exe push dist_stage "${target}:win64" --userversion $version
+          if ($LASTEXITCODE -ne 0) {
+            throw "butler push exited with code $LASTEXITCODE"
+          }
+          .\butler_bin\butler.exe status $target
